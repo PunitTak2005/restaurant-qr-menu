@@ -1,0 +1,181 @@
+/* ==========================
+   GLOBAL LAYOUT
+   ========================== */
+body {
+  font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+  background-color: #f9fafc;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-container {
+  padding: 2rem 3rem;
+  color: #333;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1f2937;
+}
+
+.admin-header p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+
+/* ==========================
+   TABLE STYLES
+   ========================== */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.orders-table th,
+.orders-table td {
+  text-align: left;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.95rem;
+}
+
+.orders-table thead {
+  background-color: #007bff;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+.orders-table th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.orders-table th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #f8fafc;
+  transition: background 0.25s ease;
+}
+
+/* ==========================
+   ORDER ITEMS
+   ========================== */
+.order-item {
+  background: #eef2ff;
+  color: #1e3a8a;
+  display: inline-block;
+  margin: 2px 3px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* ==========================
+   RESPONSIVE DESIGN
+   ========================== */
+@media screen and (max-width: 768px) {
+  .orders-table,
+  .orders-table thead,
+  .orders-table tbody,
+  .orders-table th,
+  .orders-table td,
+  .orders-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .orders-table thead {
+    display: none;
+  }
+
+  .orders-table tr {
+    background: #fff;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+  }
+
+  .orders-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: none;
+  }
+
+  .orders-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4b5563;
+    font-size: 0.9rem;
+  }
+
+  .orders-table td:last-child {
+    border-bottom: none;
+  }
+}
+
+/* ==========================
+   STATUS COLORS
+   ========================== */
+.orders-table td[data-label="Status"] {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.orders-table td[data-label="Status"]:contains("placed") {
+  color: #2563eb;
+}
+
+.orders-table td[data-label="Status"]:contains("preparing") {
+  color: #d97706;
+}
+
+.orders-table td[data-label="Status"]:contains("ready") {
+  color: #16a34a;
+}
+
+.orders-table td[data-label="Status"]:contains("served") {
+  color: #065f46;
+}
+
+.orders-table td[data-label="Status"]:contains("canceled") {
+  color: #dc2626;
+}
+
+/* ==========================
+   LOADING / ERROR
+   ========================== */
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.loading {
+  color: #007bff;
+}
+
+.error {
+  color: #e11d48;
+}
