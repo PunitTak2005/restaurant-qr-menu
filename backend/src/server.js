@@ -8,7 +8,7 @@ import { Server as SocketIOServer } from "socket.io";
 // Route Imports
 import orderRoutes from "./routes/orderRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import adminRoutes from "./routes/admin.js";            // <<✅ ADD THIS LINE
+import adminRoutes from "./routes/admin.js";
 
 // -----------------------
 // ENV + APP INITIALIZATION
@@ -16,7 +16,13 @@ import adminRoutes from "./routes/admin.js";            // <<✅ ADD THIS LINE
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/restaurantDB";
+
+// Use MONGODB_URI for Atlas! (Fallback to local DB for dev)
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  process.env.MONGO_URI ||
+  "mongodb://127.0.0.1:27017/restaurantDB";
+
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 // -----------------------
@@ -66,7 +72,7 @@ app.get("/", (req, res) => {
 // -----------------------
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminRoutes);              // <<✅ ADD THIS LINE
+app.use("/api/admin", adminRoutes);
 
 // -----------------------
 // SOCKET.IO EVENTS HANDLING
@@ -96,7 +102,10 @@ app.all("*", (req, res) =>
 // -----------------------
 const start = async () => {
   try {
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
     console.log("✅ MongoDB connected successfully");
     server.listen(PORT, "0.0.0.0", () =>
       console.log(`🚀 Server running on http://localhost:${PORT}`)
