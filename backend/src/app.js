@@ -6,7 +6,7 @@ import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 
 // Route imports
-import adminRoutes from "./routes/admin.js"; // ✅
+import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/authRoutes.js";
 import menuRoutes from "./routes/menuRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
@@ -22,7 +22,11 @@ const server = http.createServer(app);
 
 const FRONTEND_ORIGIN = process.env.CLIENT_URL || "http://localhost:5173";
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/restaurantDB";
+
+// --- Use Mongo Atlas if available ---
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  "mongodb://127.0.0.1:27017/restaurantDB"; // fallback for local dev
 
 // Middleware
 app.use(cors({
@@ -58,9 +62,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/tables", tablesRoutes);
-app.use("/api/admin", adminRoutes); // ✅
+app.use("/api/admin", adminRoutes);
 
-// 404 Handler (must be after all "use" above)
+// 404 Handler
 app.use((req, res) => {
   res.status(404).json({ success: false, error: "Route not found" });
 });
@@ -71,7 +75,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, error: err.message });
 });
 
-// Initialize Socket.IO server after HTTP server is created
+// Initialize Socket.IO server
 const io = new SocketIOServer(server, {
   cors: {
     origin: FRONTEND_ORIGIN,
@@ -98,7 +102,10 @@ app.use((req, res, next) => {
 // Startup logic
 const startServer = async () => {
   try {
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
     console.log("✅ MongoDB connected successfully");
 
     // Optionally seed DB in development
