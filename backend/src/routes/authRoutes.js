@@ -8,14 +8,12 @@ import {
   loginUser,
   getMe,
 } from "../controllers/authController.js";
-import { protect, authorize } from "../middlewares/authMiddleware.js";
+import authMiddleware, { authorize } from "../middlewares/auth.js"; // fixed import
 
 dotenv.config();
 const router = express.Router();
 
-// ------------------------------
-// Token generator utility
-// ------------------------------
+// Token generator utility with user role
 const generateToken = (user) => {
   return jwt.sign(
     { userId: user._id, email: user.email, role: user.role },
@@ -24,45 +22,34 @@ const generateToken = (user) => {
   );
 };
 
-// ===========================================================================
-// CONTROLLER-BASED CORE AUTH ROUTES
-// ===========================================================================
+// ===== CONTROLLER ROUTES =====
 router.post("/signup", registerUser);
 router.post("/login", loginUser);
-router.get("/me", protect, getMe);
+router.get("/me", authMiddleware, getMe); // updated protect to authMiddleware
 
-// ===========================================================================
-// INLINE EXTENSIONS (Optional Demonstrations or Extended Functionalities)
-// ===========================================================================
-
-// ---------------- REGISTER (ALT) ----------------
-// Allows separate endpoint for direct creation without using controller
+// ===== INLINE REGISTRATION =====
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-
-    if (!name || !email || !password)
+    if (!name || !email || !password) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required." });
-
+    }
     const existingUser = await User.findOne({ email });
-    if (existingUser)
+    if (existingUser) {
       return res
         .status(409)
         .json({ success: false, message: "Email already registered." });
-
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       name,
       email,
       passwordHash: hashedPassword,
       role: role?.toLowerCase() || "customer",
     });
-
     const token = generateToken(newUser);
-
     res.status(201).json({
       success: true,
       message: "Signup successful",
@@ -84,30 +71,28 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ---------------- LOGIN (ALT) ----------------
-// Mirrors controller logic; helpful for custom testing
+// ===== INLINE LOGIN =====
 router.post("/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
+    if (!email || !password) {
       return res
         .status(400)
         .json({ success: false, message: "Email and password required." });
-
+    }
     const user = await User.findOne({ email });
-    if (!user)
+    if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
-
+    }
     const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch)
+    if (!isMatch) {
       return res
         .status(401)
         .json({ success: false, message: "Invalid credentials" });
-
+    }
     const token = generateToken(user);
-
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -129,16 +114,16 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-// ---------------- Protected GET /me ----------------
-router.get("/me-inline", protect, async (req, res) => {
+// ===== INLINE PROTECTED GET /me =====
+router.get("/me-inline", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-passwordHash");
-    if (!user)
+    const user = await User.findById(req.user.id).select("-passwordHash");
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
-
+    }
     res.status(200).json({ success: true, user });
   } catch (error) {
     console.error("Get /me Error:", error.message);
@@ -149,8 +134,8 @@ router.get("/me-inline", protect, async (req, res) => {
   }
 });
 
-// ---------------- ADMIN DASHBOARD (Role-based Access) ----------------
-router.get("/admin-dashboard", protect, authorize("admin"), (req, res) => {
+// ===== ADMIN DASHBOARD (Role-based) =====
+router.get("/admin-dashboard", authMiddleware, authorize("admin"), (req, res) => {
   res.status(200).json({
     success: true,
     message: `Welcome Admin, ${req.user.name}!`,

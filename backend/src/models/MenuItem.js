@@ -1,4 +1,3 @@
-// backend/src/models/MenuItem.js
 import mongoose from "mongoose";
 
 // =========================
@@ -34,10 +33,12 @@ const menuItemSchema = new mongoose.Schema(
       default: "",
       trim: true,
       validate: {
-        validator: (url) =>
-          !url ||
-          /^(http|https):\/\/[^\s$.?#].[^\s]*$/gm.test(url) ||
-          url.startsWith("uploads/"),
+        validator: function (url) {
+          // Accept blank, valid http(s) URLs, or local upload path
+          if (!url) return true;
+          // Simplified regex for image URL, accepts local uploads/
+          return /^(https?:\/\/[^\s]+)|(uploads\/[^\s]+)$/.test(url);
+        },
         message: "Invalid image URL format",
       },
     },

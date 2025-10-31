@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 import "./Navbar.css";
+
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, setUser, logout, isAuthenticated } = useAuth();
@@ -18,6 +19,13 @@ const Navbar = () => {
       }
     }
   }, [user, setUser]);
+
+  // Get placed order ID if it exists
+  const [orderId, setOrderId] = useState(null);
+  useEffect(() => {
+    const storedOrderId = localStorage.getItem("lastOrderId");
+    if (storedOrderId) setOrderId(storedOrderId);
+  }, []);
 
   // Logout handler
   const handleLogout = () => {
@@ -70,7 +78,6 @@ const Navbar = () => {
         >
           Home
         </Link>
-
         <Link
           to="/m/digital-dine"
           style={{
@@ -86,7 +93,6 @@ const Navbar = () => {
         >
           Menu
         </Link>
-
         <Link
           to="/cart"
           style={{
@@ -103,24 +109,14 @@ const Navbar = () => {
           Cart
         </Link>
 
-           {user?.role === "admin" && <Link to="/admin/dashboard">Admin Dashboard</Link>}
-        {user?.role === "owner" && (
-  <Link
-    to="/staff/dashboard"
-    className="owner-dashboard-link dashboard-link"
-  >
-    Staff Dashboard
-  </Link>
-)}
+   
+       
 
-
+        {user?.role === "admin" && <Link to="/admin/dashboard">Admin Dashboard</Link>}
+        {user?.role === "owner" && <Link to="/owner/dashboard">Staff Dashboard</Link>}
+        {user && (<Link to="/my-orders">My Orders</Link>)}
 
       </div>
-
-        
-
-
-
 
       {/* RIGHT — Auth Controls */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -162,7 +158,6 @@ const Navbar = () => {
             >
               Login
             </Link>
-
             <Link
               to="/signup"
               style={{

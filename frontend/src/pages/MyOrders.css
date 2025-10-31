@@ -1,0 +1,178 @@
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  border-radius: 0; /* Remove bottom curve */
+}
+
+/* Main container grows for sticky footer */
+.my-orders-container {
+  max-width: 880px;
+  margin: 2rem auto 4rem auto;
+  padding: 2.5rem 2.5rem 1.2rem 2.5rem;
+  background: #ffffff;
+  border-radius: 1.4rem 1.4rem 0 0; /* Only top corners rounded */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  flex: 1 0 auto; /* sticky footer support */
+}
+
+.my-orders-title {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  color: #34495e;
+  letter-spacing: 0.8px;
+  text-align: center;
+}
+
+.orders-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-card {
+  background: #e6f7fb;
+  border: 1px solid #39a9db;
+  border-radius: 1.1rem;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 2.5rem 1.3rem 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.25s ease, background-color 0.3s ease;
+  color: #2c3e50;
+}
+
+.order-card:hover {
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.10);
+  background-color: #c1e7f8;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.3rem;
+}
+
+.order-id {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #117aaf;
+  letter-spacing: 0.4px;
+}
+
+.order-status {
+  text-transform: capitalize;
+  font-size: 1em;
+  font-weight: 700;
+  border-radius: 1em;
+  padding: 0.25em 1.25em;
+  color: #fff;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  letter-spacing: 0.7px;
+}
+
+/* Status colors with cyan emphasis */
+.order-status.ready { background-color: #27ae60; }
+.order-status.served { background-color: #39a9db; }
+.order-status.paid { background-color: #34495e; }
+.order-status.cancelled { background-color: #c0392b; }
+.order-status.pending { background-color: #f39c12; }
+.order-status.preparing { background-color: #3498db; }
+
+.order-meta {
+  display: flex;
+  gap: 3em;
+  font-size: 1.15em;
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+}
+
+.order-date {
+  font-style: italic;
+  color: #95a5a6;
+  font-size: 1em;
+}
+
+.order-items-list {
+  margin-top: 0.8em;
+  padding-left: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+.order-item {
+  padding: 0.4em 0;
+  font-size: 1.15em;
+  color: #34495e;
+  letter-spacing: 0.2px;
+}
+
+.order-item span.menu-item-name {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: #117aaf;
+}
+
+.order-item span.qty {
+  font-size: 1em;
+  color: #95a5a6;
+  margin-left: 0.8em;
+}
+
+.missing-item {
+  color: #d35400;
+  font-style: italic;
+  background: #fdf3e7;
+  padding: 0.3em 1.3em;
+  border-radius: 0.6em;
+  font-size: 1em;
+}
+
+/* Sticky Footer Styles */
+footer {
+  width: 100%;
+  background: #232323;         /* dark footer BG */
+  color: #fff;
+  text-align: center;
+  padding: 1.2rem 0;
+  margin-top: auto;             /* push to bottom of flex column */
+  padding-bottom: 0;
+  border-radius: 0;             /* ensure no bottom curve */
+  font-size: 1.1em;
+  letter-spacing: 0.5px;
+  box-shadow: 0 -2px 20px rgba(57, 169, 219, 0.08);
+}
+
+/* If parent has border-radius, remove bottom for footer */
+.outer-wrapper {
+  border-radius: 1.4rem 1.4rem 0 0; /* Only top corners rounded */
+}
+
+@media (max-width: 750px) {
+  .my-orders-container {
+    max-width: 98vw;
+    padding: 1rem 1rem;
+    border-radius: 1.4rem 1.4rem 0 0;
+  }
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .order-card {
+    padding: 1.2rem 1.5rem 1rem 1.5rem;
+  }
+  .order-meta {
+    gap: 1.5em;
+  }
+}

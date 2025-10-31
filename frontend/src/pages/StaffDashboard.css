@@ -104,9 +104,61 @@
   color: #1e3a8a;
 }
 
+.status.ready {
+  background-color: #d1fae5; /* green-cyan */
+  color: #065f46;
+}
+
+.status.served {
+  background-color: #e0e7ff; /* gray-blue */
+  color: #3730a3;
+}
+
+.status.paid {
+  background-color: #bae6fd; /* blue-teal */
+  color: #0369a1;
+}
+
 .status.cancelled {
   background-color: #fee2e2; /* red light */
   color: #b91c1c;
+}
+
+/* ---------------- STATUS DROPDOWN & BUTTON ---------------- */
+
+.orders-table td select {
+  padding: 0.25rem 0.7rem;
+  margin-right: 0.5em;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  background: #f5f3ff;
+  color: #3b3b48;
+  font-size: 0.97em;
+  transition: border 0.2s;
+}
+
+.orders-table td select:focus {
+  outline: none;
+  border-color: #6d28d9;
+  background: #ede9fe;
+}
+
+.orders-table td button {
+  background: #39a9db;
+  color: #fff;
+  padding: 0.28em 1.1em;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.97em;
+  cursor: pointer;
+  margin-left: 4px;
+  transition: background 0.15s;
+}
+
+.orders-table td button:hover, 
+.orders-table td button:focus {
+  background: #0e81b1;
 }
 
 /* ---------------- RESPONSIVE DESIGN ---------------- */

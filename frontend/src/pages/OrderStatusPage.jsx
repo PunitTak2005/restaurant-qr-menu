@@ -1,18 +1,14 @@
-// src/pages/OrderStatusPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./OrderStatusPage.css";
 
-// ----------------------
-// Fetch order from backend API with robust error handling
-// ----------------------
+// --- Fetch order from backend API ---
 const fetchOrderById = async (id) => {
   try {
     const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
       headers: { "Accept": "application/json" },
     });
-
     if (!res.ok) {
       let message;
       switch (res.status) {
@@ -27,36 +23,28 @@ const fetchOrderById = async (id) => {
       }
       throw new Error(message);
     }
-
     const contentType = res.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-      const text = await res.text();
-      console.warn("⚠️ Non-JSON response detected:", text.slice(0, 100));
+      await res.text();
       throw new Error("Received unexpected response from server.");
     }
-
     const data = await res.json();
     if (!data || typeof data !== "object") {
       throw new Error("Malformed response from server.");
     }
-
     return data?.order || null;
   } catch (err) {
     if (err.name === "TypeError") {
-      console.error("🌐 Network or CORS error:", err.message);
       throw new Error("Unable to reach the server. Please check your connection.");
     }
-    console.error("❌ API fetch error:", err.message);
     throw err;
   }
 };
 
-// ----------------------
-// Socket connection
-// ----------------------
+// -- Socket connection --
 const socket = io("http://localhost:5000");
 
-// Define human-readable order statuses
+// Human-readable order statuses
 const statusMessages = {
   pending: "Your order is being processed",
   preparing: "Your order is being prepared",
@@ -64,7 +52,7 @@ const statusMessages = {
   served: "Order has been served",
 };
 
-// Define percentage progression
+// Progress percentages
 const progressPercentages = {
   pending: 20,
   preparing: 50,
@@ -77,27 +65,20 @@ const OrderStatusPage = () => {
   const navigate = useNavigate();
 
   const [status, setStatus] = useState("pending");
+  const [order, setOrder] = useState(null);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   // --- SOCKET.IO REAL-TIME CONNECTION ---
   useEffect(() => {
-    socket.on("connect", () => {
-      console.log("✅ Connected to Socket.IO server");
-      setIsSocketConnected(true);
-    });
-
-    socket.on("disconnect", () => {
-      console.warn("⚠️ Disconnected from Socket.IO server");
-      setIsSocketConnected(false);
-    });
-
+    socket.on("connect", () => setIsSocketConnected(true));
+    socket.on("disconnect", () => setIsSocketConnected(false));
     socket.on("order-status", (data) => {
       if (String(data.orderId) === String(id)) {
         setStatus(data.status);
+        if (data.order) setOrder(data.order);
       }
     });
-
     return () => {
       socket.off("connect");
       socket.off("disconnect");
@@ -105,27 +86,28 @@ const OrderStatusPage = () => {
     };
   }, [id]);
 
-  // --- POLLING FALLBACK (used when socket is disconnected) ---
+  // --- INITIAL FETCH and POLLING ---
   useEffect(() => {
-    const pollStatus = async () => {
+    const pollOrder = async () => {
       try {
-        const order = await fetchOrderById(id);
-        if (order?.status) {
-          setStatus(order.status);
+        const result = await fetchOrderById(id);
+        if (result) {
+          setOrder(result);
+          if (result.status) setStatus(result.status);
+          setErrorMessage("");
+        } else {
+          setOrder(null);
           setErrorMessage("");
         }
       } catch (err) {
-        console.error("Polling error:", err.message);
         setErrorMessage(err.message);
+        setOrder(null);
       }
     };
-
+    pollOrder();
     const interval = setInterval(() => {
-      if (!isSocketConnected) pollStatus();
-    }, 5000); // Poll every 5 seconds
-
-    pollStatus(); // Also run once on mount
-
+      if (!isSocketConnected) pollOrder();
+    }, 5000);
     return () => clearInterval(interval);
   }, [isSocketConnected, id]);
 
@@ -133,14 +115,11 @@ const OrderStatusPage = () => {
 
   return (
     <div className="order-status-container">
-      {/* Header */}
-      <header className="order-header">
-        <h1>Order Status</h1>
-        <p>Tracking your order #{id}</p>
-      </header>
-
-      {/* Status Tracker */}
       <main className="status-tracker">
+        <header className="order-header">
+          <h1>Order Status</h1>
+          <p>Tracking your order #{id}</p>
+        </header>
         <div className="status-card">
           <img
             src="https://cdn-icons-png.flaticon.com/512/2910/2910761.png"
@@ -155,42 +134,77 @@ const OrderStatusPage = () => {
                 Go Back
               </button>
             </div>
+          ) : !order ? (
+            <div className="status-error">
+              <p style={{ color: "orange", fontWeight: 600 }}>Order not placed.</p>
+              <button className="back-btn" onClick={() => navigate("/")}>
+                Go Back
+              </button>
+            </div>
           ) : (
             <>
               <div className="status-message">
                 {statusMessages[status] || "Updating..."}
               </div>
               <div className="status-time">
-                Estimated delivery: 30–45 minutes
+                Estimated delivery: 10-15 minutes
               </div>
-
-              {/* Progress Bar */}
               <div className="progress-container">
                 <div
                   className="progress-bar"
                   style={{ width: `${progressPercent}%` }}
                 ></div>
               </div>
-
-              <p className="connection-status">
-                <b>Connection:</b>{" "}
-                <span style={{ color: isSocketConnected ? "green" : "red" }}>
-                  {isSocketConnected ? "Online" : "Offline (Polling)"}
-                </span>
-              </p>
-
               <button className="back-btn" onClick={() => navigate("/")}>
                 Back to Home
               </button>
             </>
           )}
         </div>
-      </main>
 
-      {/* Footer */}
-      <footer className="order-footer">
-        <p>&copy; 2025 Digital Dine. All rights reserved.</p>
-      </footer>
+        {/* --- ORDER DETAILS SECTION --- */}
+        {order && (
+          <section className="order-details">
+            <h2>Your Order</h2>
+            <table className="order-items-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {order.items && order.items.length > 0 ? (
+                  order.items.map((item, idx) => (
+                    <tr key={item.menuItemId._id || idx}>
+                      <td>{item.menuItemId.name}</td>
+                      <td>{item.qty}</td>
+                      <td>₹{item.menuItemId.price * item.qty}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} style={{ textAlign: "center", color: "#888" }}>
+                      No items found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <div className="order-meta">
+              {order.tableId?.number && (
+                <span>
+                  <b>Table:</b> {order.tableId.number}
+                </span>
+              )}
+              <span>
+                <b>Total:</b> ₹{order.totalPrice ?? "-"}
+              </span>
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 };

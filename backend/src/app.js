@@ -3,68 +3,37 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
-import { Server } from "socket.io";
+import { Server as SocketIOServer } from "socket.io";
 
 // Route imports
+import adminRoutes from "./routes/admin.js"; // ✅
 import authRoutes from "./routes/authRoutes.js";
 import menuRoutes from "./routes/menuRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import tablesRoutes from "./routes/tables.js";
-
-// Optional seeding/controllers
 import seedDB from "./seed/seedDB.js";
 import { loginUser } from "./controllers/authController.js";
+import Order from "./models/Order.js";
 
 dotenv.config();
 
-// Server + middleware setup
 const app = express();
 const server = http.createServer(app);
 
-// Frontend origin
 const FRONTEND_ORIGIN = process.env.CLIENT_URL || "http://localhost:5173";
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/restaurantDB";
 
-// CORS + parsers
-app.use(
-  cors({
-    origin: FRONTEND_ORIGIN,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-  })
-);
+// Middleware
+app.use(cors({
+  origin: FRONTEND_ORIGIN,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  credentials: true,
+}));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Socket.IO setup
-const io = new Server(server, {
-  cors: {
-    origin: FRONTEND_ORIGIN,
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
-
-// Attach socket.io to requests
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
-
-// Live order updates
-io.on("connection", (socket) => {
-  console.log("🟢 Client connected:", socket.id);
-
-  socket.on("order:new", (data) => {
-    console.log("📦 New order broadcast:", data);
-    io.emit("order:update", data);
-  });
-
-  socket.on("disconnect", () => {
-    console.warn("🔴 Client disconnected:", socket.id);
-  });
-});
-
-// Health check
+// Health check route
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
@@ -72,39 +41,73 @@ app.get("/", (req, res) => {
   });
 });
 
-// API routes
+// Polling endpoint example (poll for new orders)
+app.get("/api/poll/orders", async (req, res) => {
+  try {
+    const { since } = req.query;
+    const newOrders = await Order.find(since ? { updatedAt: { $gt: since } } : {});
+    res.status(200).json({ success: true, orders: newOrders });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Mount routes
 app.post("/api/auth/login", loginUser);
 app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/tables", tablesRoutes);
+app.use("/api/admin", adminRoutes); // ✅
 
-// 404 handler
+// 404 Handler (must be after all "use" above)
 app.use((req, res) => {
   res.status(404).json({ success: false, error: "Route not found" });
 });
 
-// Global error handler
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error("💥 Global Error:", err.stack || err.message);
   res.status(500).json({ success: false, error: err.message });
 });
 
-// DB connection
+// Initialize Socket.IO server after HTTP server is created
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: FRONTEND_ORIGIN,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  },
+});
+export { io };
+
+io.on("connection", (socket) => {
+  console.log("🟢 Client connected:", socket.id);
+  socket.on("disconnect", () => {
+    console.log("🔴 Client disconnected:", socket.id);
+  });
+  // socket.on("order:new", (order) => { io.emit("order:update", order); });
+});
+
+// Attach io instance to every request for use in routes/controllers
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+// Startup logic
 const startServer = async () => {
   try {
-    const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/restaurantDB";
     await mongoose.connect(MONGO_URI);
     console.log("✅ MongoDB connected successfully");
 
-    // Optional: seed database in development
+    // Optionally seed DB in development
     if (process.env.NODE_ENV === "development" && seedDB) {
       await seedDB();
       console.log("🌱 Database seeded successfully");
     }
 
-    const PORT = process.env.PORT || 5000;
-    server.listen(PORT, () =>
+    server.listen(PORT, "0.0.0.0", () =>
       console.log(`🚀 Server running at http://localhost:${PORT}`)
     );
   } catch (err) {
@@ -115,5 +118,4 @@ const startServer = async () => {
 
 startServer();
 
-export { io };
 export default app;

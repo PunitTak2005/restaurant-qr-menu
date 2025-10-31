@@ -1,181 +1,167 @@
-/* ==========================
-   GLOBAL LAYOUT
-   ========================== */
-body {
-  font-family: "Poppins", "Segoe UI", Arial, sans-serif;
-  background-color: #f9fafc;
-  margin: 0;
-  padding: 0;
-}
-
 .admin-container {
-  padding: 2rem 3rem;
-  color: #333;
+  max-width: 1200px;
+  margin: 32px auto;
+  padding: 32px 20px;
+  background: #fafbfc;
+  border-radius: 18px;
+  box-shadow: 0 6px 26px rgba(44, 92, 120, 0.09);
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  color: #223347;
 }
 
 .admin-header {
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #e5e7eb;
-  padding-bottom: 0.5rem;
+  text-align: center;
+  margin-bottom: 36px;
 }
-
 .admin-header h1 {
-  font-size: 2rem;
-  font-weight: 600;
   margin: 0;
-  color: #1f2937;
+  font-size: 2.3rem;
+  color: #2b87ff;
+  letter-spacing: 1px;
+  font-weight: 700;
 }
-
 .admin-header p {
-  color: #6b7280;
-  font-size: 0.95rem;
-  margin-top: 0.3rem;
+  font-size: 1.05rem;
+  color: #517599;
 }
 
-/* ==========================
-   TABLE STYLES
-   ========================== */
+.analytics-section {
+  margin-bottom: 45px;
+}
+
+.metrics-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-bottom: 32px;
+}
+
+.metric-card {
+  flex: 1 1 210px;
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 13px;
+  box-shadow: 0 2px 10px rgba(44,92,120,0.08);
+  min-width: 180px;
+}
+.metric-card h4 {
+  font-size: 1.16rem;
+  margin: 0 0 8px 0;
+  color: #2976d6;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.metric-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.metric-card li {
+  font-size: 1.02rem;
+  margin-bottom: 2px;
+  color: #47617b;
+}
+.metric-card li:last-child {
+  margin-bottom: 0;
+}
+
+.charts-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 38px;
+}
+.chart-box {
+  flex: 1 1 330px;
+  min-width: 320px;
+  background: #fff;
+  border-radius: 13px;
+  box-shadow: 0 2px 12px rgba(44,92,120,0.07);
+  padding: 20px 16px 4px 16px;
+}
+
+.orders-section {
+  margin-top: 36px;
+}
+
 .orders-table {
   width: 100%;
+  margin-top: 14px;
   border-collapse: collapse;
   background: #fff;
-  border-radius: 10px;
+  border-radius: 13px;
   overflow: hidden;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(44,92,120,0.08);
+  font-size: 1.04rem;
 }
-
-.orders-table th,
-.orders-table td {
+.orders-table th, .orders-table td {
+  padding: 13px 10px;
   text-align: left;
-  padding: 14px 18px;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 0.95rem;
+}
+.orders-table th {
+  font-size: 1.01rem;
+  background: #e6f2fd;
+  color: #2562a9;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.orders-table tr:nth-child(even) {
+  background: #f6fafd;
+}
+.orders-table td {
+  color: #364e63;
 }
 
-.orders-table thead {
-  background-color: #007bff;
-  color: #fff;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 0.03em;
-}
-
-.orders-table th:first-child {
-  border-top-left-radius: 10px;
-}
-
-.orders-table th:last-child {
-  border-top-right-radius: 10px;
-}
-
-.orders-table tbody tr:hover {
-  background-color: #f8fafc;
-  transition: background 0.25s ease;
-}
-
-/* ==========================
-   ORDER ITEMS
-   ========================== */
-.order-item {
-  background: #eef2ff;
-  color: #1e3a8a;
+.status {
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 0.98rem;
+  font-weight: 500;
   display: inline-block;
-  margin: 2px 3px;
-  padding: 4px 8px;
-  border-radius: 5px;
-  font-size: 0.85rem;
-  white-space: nowrap;
+  color: #fff;
+}
+.status.pending    { background: #ff9c23; }
+.status.preparing  { background: #1e72bf; }
+.status.ready      { background: #4cc472; }
+.status.served     { background: #2b87ff; }
+.status.paid       { background: #10a18a; }
+.status.cancelled  { background: #d44a4a; }
+
+.loading, .error {
+  color: #2076b7;
+  font-size: 1.09rem;
+  text-align: center;
+  margin: 30px 0 10px 0;
+}
+.error {
+  color: #e02d2d;
 }
 
-/* ==========================
-   RESPONSIVE DESIGN
-   ========================== */
-@media screen and (max-width: 768px) {
-  .orders-table,
-  .orders-table thead,
-  .orders-table tbody,
-  .orders-table th,
-  .orders-table td,
-  .orders-table tr {
-    display: block;
+/* Responsive */
+@media (max-width: 900px) {
+  .metrics-group, .charts-group {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .chart-box {
+    min-width: 0;
     width: 100%;
   }
-
-  .orders-table thead {
-    display: none;
+  .metric-card {
+    min-width: 0;
+    width: 100%;
   }
-
-  .orders-table tr {
-    background: #fff;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 10px;
+}
+@media (max-width: 650px) {
+  .admin-container {
+    padding: 14px 3vw;
   }
-
-  .orders-table td {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-bottom: none;
+  .orders-table th, .orders-table td {
+    padding: 9px 5px;
   }
-
-  .orders-table td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #4b5563;
-    font-size: 0.9rem;
-  }
-
-  .orders-table td:last-child {
-    border-bottom: none;
+  .charts-group, .metrics-group {
+    flex-direction: column;
+    gap: 12px;
   }
 }
 
-/* ==========================
-   STATUS COLORS
-   ========================== */
-.orders-table td[data-label="Status"] {
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.orders-table td[data-label="Status"]:contains("placed") {
-  color: #2563eb;
-}
-
-.orders-table td[data-label="Status"]:contains("preparing") {
-  color: #d97706;
-}
-
-.orders-table td[data-label="Status"]:contains("ready") {
-  color: #16a34a;
-}
-
-.orders-table td[data-label="Status"]:contains("served") {
-  color: #065f46;
-}
-
-.orders-table td[data-label="Status"]:contains("canceled") {
-  color: #dc2626;
-}
-
-/* ==========================
-   LOADING / ERROR
-   ========================== */
-.loading,
-.error {
-  text-align: center;
-  padding: 2rem;
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-.loading {
-  color: #007bff;
-}
-
-.error {
-  color: #e11d48;
-}

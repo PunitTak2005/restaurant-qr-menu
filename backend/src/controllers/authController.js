@@ -7,15 +7,16 @@ const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
 
 // Token generator
 const generateToken = (user) =>
-  jwt.sign({ id: user._id, role: user.role, email: user.email }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES,
-  });
+  jwt.sign(
+    { id: user._id, role: user.role, email: user.email },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES }
+  );
 
 // ---------------- REGISTER ----------------
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-
     if (!name || !email || !password)
       return res
         .status(400)
@@ -27,7 +28,7 @@ export const registerUser = async (req, res) => {
     if (existingUser)
       return res.status(400).json({ success: false, error: "Email already registered" });
 
-    // Pass plain password; the model pre("save") hook will hash it
+    // Pass plain password; pre('save') hook will hash
     const newUser = new User({
       name,
       email: normalizedEmail,
@@ -59,19 +60,18 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (!email || !password)
       return res.status(400).json({ success: false, error: "Email & password required" });
 
     const normalizedEmail = email.toLowerCase().trim();
 
-  const user = await User.findOne({ email: email.toLowerCase() });
-if (!user) return res.status(401).json({ success: false, error: "User not found" });
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user)
+      return res.status(401).json({ success: false, error: "User not found" });
 
-const isMatch = await user.matchPassword(password);
-if (!isMatch)
-  return res.status(401).json({ success: false, error: "Invalid credentials (password mismatch)" });
-
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch)
+      return res.status(401).json({ success: false, error: "Invalid credentials (password mismatch)" });
 
     const token = generateToken(user);
     res.status(200).json({
@@ -96,7 +96,7 @@ export const getMe = (req, res) => {
   try {
     res.status(200).json({
       success: true,
-      user: req.user, // populated by middleware after JWT verification
+      user: req.user, // Populated by auth middleware after JWT verification
     });
   } catch (err) {
     console.error("GetMe Error:", err);

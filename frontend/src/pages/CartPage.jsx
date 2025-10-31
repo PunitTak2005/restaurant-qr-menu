@@ -21,7 +21,7 @@ const CartPage = () => {
   // ===== Table Selection =====
   const [selectedTable, setSelectedTable] = useState("");
 
-  // ===== Dummy Tables (Replace with DB fetch) =====
+  // ===== Dummy Tables - Replace with DB data =====
   const tableOptions = [
     { _id: "68fb686699593b4004cebea7", number: 1 },
     { _id: "68fb686699593b4004cebea8", number: 2 },
@@ -29,32 +29,26 @@ const CartPage = () => {
     { _id: "68fb686699593b4004cebeaa", number: 4 },
   ];
 
-  // ==========================================================
-  // CREATE & SUBMIT ORDER (FIXED)
-  // ==========================================================
+  // ==== CREATE & SUBMIT ORDER ====
   const handlePlaceOrder = async () => {
     try {
-      // --- PRE-CHECKS ---
       if (!isAuthenticated || !user?._id) {
         alert("You must log in to place an order.");
         navigate("/signin");
         return;
       }
-
       if (!cartItems || cartItems.length === 0) {
         alert("Your cart is empty!");
         return;
       }
-
       if (!selectedTable) {
         alert("Please select a table number before ordering.");
         return;
       }
 
-      // --- BUILD PAYLOAD ---
       const orderData = {
         userId: user._id,
-        tableId: selectedTable, // ✅ Send actual ObjectId string (_id)
+        tableId: selectedTable,
         items: cartItems.map((it) => ({
           menuItemId: it._id,
           qty: it.quantity,
@@ -64,24 +58,18 @@ const CartPage = () => {
         status: "pending",
       };
 
-      console.log("📤 Payload Sent to Backend:", orderData);
-
-      // --- SEND TO BACKEND via axios.post ---
       const res = await axios.post("http://localhost:5000/api/orders", orderData, {
         headers: { "Content-Type": "application/json" },
       });
 
-      // --- HANDLE RESPONSE ---
       if (res.data?.success) {
-        console.log("✅ Order created:", res.data.order);
         clearCart();
         alert(`Order placed successfully! Table ${res.data.order.tableId?.number}`);
-        navigate(`/order/${res.data.order._id}`);
+        navigate(`/order/${res.data.order._id}`, { replace: true });
       } else {
         alert(res.data?.error || "Order creation failed.");
       }
     } catch (err) {
-      console.error("💥 Error placing order:", err.response?.data || err.message);
       const message =
         err.response?.data?.error ||
         err.response?.data?.message ||
@@ -90,16 +78,12 @@ const CartPage = () => {
     }
   };
 
-  // ==========================================================
-  // GO BACK TO MENU
-  // ==========================================================
+  // ==== GO BACK TO MENU ====
   const goToMenu = () => {
     navigate(`/m/${restaurantSlug || "default-restaurant"}`);
   };
 
-  // ==========================================================
-  // EMPTY CART VIEW
-  // ==========================================================
+  // ==== EMPTY CART VIEW ====
   if (!cartItems || cartItems.length === 0) {
     return (
       <div className="cart-container">
@@ -112,58 +96,78 @@ const CartPage = () => {
             Browse Menu
           </button>
         </div>
-        <footer className="cart-footer">
-          <p>© 2025 Digital Dine. All rights reserved.</p>
-        </footer>
+      
       </div>
     );
   }
 
-  // ==========================================================
-  // MAIN CART VIEW
-  // ==========================================================
+  // ==== MAIN CART VIEW ====
   return (
     <div className="cart-container">
       <h1 className="cart-title">Your Shopping Cart</h1>
 
       <div className="cart-content">
-        {/* ================== CART ITEMS ================== */}
-        <ul className="cart-list">
-          {cartItems.map((item) => (
-            <li key={item._id} className="cart-item">
-              <div className="item-info">
-                <h3>{item.name}</h3>
-                <p>Price: ₹{item.price}</p>
+        {/* ==== ORDER-STYLE TABLE ==== */}
+        <section className="order-details">
+          <h2>Your Cart Items</h2>
+          <table className="order-items-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.length > 0 ? (
+                cartItems.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.name}</td>
+                    <td>
+                      <div className="quantity-controls">
+                        <button
+                          onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
+                        >
+                          −
+                        </button>
+                        <span>{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td>₹{item.price * item.quantity}</td>
+                    <td>
+                      <button
+                        className="remove-btn"
+                        onClick={() => removeFromCart(item._id)}
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: "center", color: "#888" }}>
+                    No items found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <div className="order-meta">
+            <span>
+              <b>Total:</b> ₹{totalPrice ?? "-"}
+            </span>
+          </div>
+        </section>
 
-                <div className="quantity-controls">
-                  <button
-                    onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
-                  >
-                    −
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                  >
-                    +
-                  </button>
-                </div>
-
-                <p>Total: ₹{item.price * item.quantity}</p>
-              </div>
-
-              <button
-                className="remove-btn"
-                onClick={() => removeFromCart(item._id)}
-              >
-                Remove
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        {/* ================== SUMMARY ================== */}
+        {/* ==== SUMMARY & TABLE SELECTION ==== */}
         <div className="cart-summary">
           <h2>Order Summary</h2>
           <p>Total Items: {cartItems.length}</p>
@@ -203,9 +207,7 @@ const CartPage = () => {
         </div>
       </div>
 
-      <footer className="cart-footer">
-        <p>© 2025 Digital Dine. All rights reserved.</p>
-      </footer>
+      
     </div>
   );
 };

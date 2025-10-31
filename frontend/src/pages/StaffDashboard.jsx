@@ -1,12 +1,21 @@
-// src/pages/StaffDashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./StaffDashboard.css";
+
+const STATUS_OPTIONS = [
+  "pending",
+  "preparing",
+  "ready",
+  "served",
+  "paid",
+  "cancelled",
+];
 
 const StaffDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [statusUpdates, setStatusUpdates] = useState({});
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -22,6 +31,33 @@ const StaffDashboard = () => {
     };
     fetchOrders();
   }, []);
+
+  // Handle status change in dropdown
+  const handleStatusChange = (orderId, newStatus) => {
+    setStatusUpdates({ ...statusUpdates, [orderId]: newStatus });
+  };
+
+  // Send status update to backend
+  const updateOrderStatus = async (orderId) => {
+    try {
+      const newStatus = statusUpdates[orderId];
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `http://localhost:5000/api/orders/${orderId}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Update status in UI
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (err) {
+      alert("Failed to update order status!");
+      console.error(err);
+    }
+  };
 
   if (loading) return <p className="loading">Loading orders...</p>;
   if (error) return <p className="error">{error}</p>;
@@ -50,6 +86,7 @@ const StaffDashboard = () => {
                 <th>Total (₹)</th>
                 <th>Status</th>
                 <th>Time</th>
+                <th>Update Status</th>
               </tr>
             </thead>
             <tbody>
@@ -84,6 +121,35 @@ const StaffDashboard = () => {
                       day: "2-digit",
                       month: "short",
                     })}
+                  </td>
+                  <td data-label="Update Status">
+                    <select
+                      value={statusUpdates[order._id] || order.status}
+                      onChange={(e) =>
+                        handleStatusChange(order._id, e.target.value)
+                      }
+                    >
+                      {STATUS_OPTIONS.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => updateOrderStatus(order._id)}
+                      style={{
+                        marginLeft: "8px",
+                        padding: "5px 12px",
+                        background: "#39a9db",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "0.5em",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Update
+                    </button>
                   </td>
                 </tr>
               ))}

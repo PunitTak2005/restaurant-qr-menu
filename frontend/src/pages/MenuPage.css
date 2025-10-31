@@ -16,7 +16,7 @@
   --border-radius: 14px;
   --transition: all 0.35s ease;
   --font-family: "Roboto", sans-serif;
-  --navbar-height: 90px; /* match padding & h1/font size on desktop */
+  --navbar-height: 90px;
 }
 
 /* Base Reset */
@@ -26,19 +26,23 @@
   box-sizing: border-box;
 }
 
+/* Prevent horizontal scroll anywhere */
 html, body {
   min-height: 100%;
+  overflow-x: hidden;
 }
 
+/* Flex layout for full-page sticky footer */
 body {
   font-family: var(--font-family);
   background: var(--bg-light);
   color: var(--text-dark);
   line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* Fixed Navbar */
@@ -47,13 +51,15 @@ body {
   top: 0;
   left: 0;
   z-index: 100;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
   padding: 2rem 0 1rem 0;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: var(--text-light);
   box-shadow: var(--shadow-md);
   text-align: center;
   flex-shrink: 0;
+  overflow-x: hidden;
 }
 
 .menu-header h1 {
@@ -61,8 +67,8 @@ body {
   font-size: clamp(2rem, 5vw, 2.8rem);
   font-weight: 700;
   margin-bottom: 0.5rem;
-  background: none;
   letter-spacing: 0.5px;
+  background: none;
 }
 
 .menu-header h1 span {
@@ -77,16 +83,19 @@ body {
   line-height: 1.7;
 }
 
-/* Main (add space for fixed navbar) */
-.menu-container {
+/* Main container (add space for fixed navbar) */
+.menu-container,
+.cart-container {
   display: flex;
   flex-direction: column;
   flex: 1;
   background: linear-gradient(to bottom right, #ffffff, #f7f8fa);
   text-align: center;
   margin-top: var(--navbar-height);
-  min-height: calc(100vh - var(--navbar-height) - 64px); /* 64px is footer height, adjust as needed */
+  min-height: calc(100vh - var(--navbar-height) - 64px); /* 64px is footer height */
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Grid */
@@ -97,8 +106,10 @@ body {
   width: 100%;
   max-width: 1200px;
   padding: 0 2rem 3rem;
+  box-sizing: border-box;
   justify-items: center;
   flex: 1;
+  overflow-x: hidden;
 }
 
 /* Card */
@@ -115,6 +126,7 @@ body {
   width: 100%;
   max-width: 300px;
   border: 1px solid #eee;
+  overflow-x: hidden;
 }
 
 .menu-card:hover {
@@ -131,6 +143,7 @@ body {
   border-radius: 12px;
   margin-bottom: 1.2rem;
   transition: transform 0.35s ease;
+  overflow-x: hidden;
 }
 
 .menu-card:hover .menu-img {
@@ -144,6 +157,7 @@ body {
   margin-bottom: 0.4rem;
   letter-spacing: 0.3px;
 }
+
 .menu-card span {
   font-size: 1.25rem;
   font-weight: 700;
@@ -172,29 +186,60 @@ body {
 }
 
 /* Footer sticks to bottom unless content is taller than screen */
-.menu-footer {
-  width: 100vw;
+/* Footer */
+.footer {
+  background: #1f1f1f;
   text-align: center;
-  background: #000000;
-  color: var(--text-light);
-  padding: 2rem 0 1rem 0;
-  font-size: 0.95rem;
-  font-weight: 300;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.10);
+  padding: 1.35rem 0 1.15rem 0;
+  color: #f0f0f0;
+  font-weight: 500;
+  font-size: 1.07rem;
+  border-top: 1px solid #333;
   margin-top: auto;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+  border-top-left-radius: 36px;
+  border-top-right-radius: 36px;
+  width: 100vw;
 }
 
+.footer .brand-highlight {
+  color: #ffc857;
+  background: none;
+  font-weight: 700;
+  padding: 0 .19rem;
+}
 
 /* Responsive tweaks */
+@media (max-width: 1200px) {
+  .menu-grid {
+    max-width: 100vw;
+    padding: 0 1rem 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   :root { --navbar-height: 82px; }
   .menu-header h1 { font-size: 2.2rem; }
   .menu-header { padding: 1.3rem 0 0.8rem 0; }
-  .menu-grid { padding: 0 1rem 2rem; gap: 1.3rem; }
+  .menu-grid {
+    padding: 0 1rem 2rem;
+    gap: 1.3rem;
+    max-width: 100vw;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  .menu-container,
+  .menu-footer,
+  .menu-header,
+  .cart-container,
+  .cart-footer {
+    max-width: 100vw;
+    width: 100%;
+    overflow-x: hidden;
+  }
   .menu-card { padding: 1.3rem 0.7rem; }
 }
+
 @media (max-width: 480px) {
   :root { --navbar-height: 72px; }
   .menu-header h1 { font-size: 1.1rem; }
@@ -203,5 +248,39 @@ body {
   .add-btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
   .menu-img { height: 120px; }
   .menu-card { padding: 0.9rem 0.3rem; }
-  .menu-footer { padding: 1.3rem 0 0.6rem 0; }
+  .menu-footer,
+  .cart-footer { padding: 1.3rem 0 0.6rem 0; }
+}
+
+/* Optional: Hide scrollbar for aesthetics */
+body::-webkit-scrollbar {
+  display: none;
+}
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.cart-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e67e22;
+  color: #fff;
+  padding: 0.7em 1.2em;
+  border-radius: 22px;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 8px 28px rgba(44, 62, 80, 0.18);
+  z-index: 999;
+  letter-spacing: 1px;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.35s cubic-bezier(.19,1,.22,1);
+}
+
+/* Optional fade out effect */
+.cart-toast-leave {
+  opacity: 0;
 }

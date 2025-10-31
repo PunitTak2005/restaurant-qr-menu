@@ -1,16 +1,24 @@
 import mongoose from "mongoose";
-import Order from "../models/Order.js"; // ✅ allow static queries to reference orders
+import Order from "../models/Order.js"; // ✅ Allow static queries to reference orders
 
 // ==================================================
 // Table Schema
 // ==================================================
-const tableSchema = new mongoose.Schema({
-  number: { type: Number, required: true, unique: true },
-  qrSlug: { type: String, required: true, unique: true },
-  status: { type: String, enum: ["available", "occupied"], default: "available" },
-  seats: { type: Number, default: 4 },
-  active: { type: Boolean, default: true },
-});
+const tableSchema = new mongoose.Schema(
+  {
+    number: { type: Number, required: true, unique: true },
+    qrSlug: { type: String, required: true, unique: true },
+    status: {
+      type: String,
+      enum: ["available", "occupied"],
+      default: "available",
+    },
+    seats: { type: Number, default: 4 },
+    active: { type: Boolean, default: true },
+  },
+  { timestamps: true } // recommended for tracking created/updated times
+);
+
 // ==================================================
 // Static Utility: Log Linked Orders (with Population)
 // ==================================================
@@ -38,4 +46,5 @@ tableSchema.statics.logPopulatedOrders = async function () {
 // ==================================================
 // Export Model (Case‑Sensitive Name)
 // ==================================================
-export default mongoose.model("Table", tableSchema);
+const Table = mongoose.models.Table || mongoose.model("Table", tableSchema);
+export default Table;

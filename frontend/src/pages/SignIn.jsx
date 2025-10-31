@@ -89,6 +89,23 @@ const SignIn = () => {
   // ------------------------------------------------------------
   return (
     <div className="auth-container">
+      {/* Sign in to order warning */}
+      <div
+        style={{
+          background: "#ffe6e6",
+          color: "#b71c1c",
+          border: "1px solid #f8bdbd",
+          borderRadius: "6px",
+          padding: "14px 18px",
+          fontWeight: 600,
+          fontSize: "1.05em",
+          marginBottom: "18px",
+          textAlign: "center"
+        }}
+      >
+        ⚠️ You must <span style={{ textDecoration: "underline" }}>sign in</span> to place an order.
+      </div>
+      
       <form className="auth-form" onSubmit={handleSignIn}>
         <h2 className="auth-title">Sign In</h2>
 

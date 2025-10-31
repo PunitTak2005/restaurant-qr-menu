@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { CustomerProvider } from "./context/CustomerContext";
 import { OwnerProvider } from "./context/OwnerContext";
 import { CartProvider } from "./context/useCart";
+import { SocketProvider } from "./context/SocketContext";
 
 import "./index.css";
 
@@ -20,7 +21,11 @@ const Providers = ({ children }) => (
   <AuthProvider>
     <CustomerProvider>
       <OwnerProvider>
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <SocketProvider>
+            {children}
+          </SocketProvider>
+        </CartProvider>
       </OwnerProvider>
     </CustomerProvider>
   </AuthProvider>

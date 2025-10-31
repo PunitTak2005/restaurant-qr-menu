@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
 
+/* ================= Theme variables ================= */
 :root {
   --primary: #2c3e50;
   --secondary: #34495e;
@@ -16,9 +17,10 @@
   --shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   --transition: all 0.3s ease;
   --font: "Roboto", sans-serif;
+  --navbar-height: 64px; /* Adjust if your navbar height differs */
 }
 
-/* ============== Reset ============== */
+/* ================= Reset ================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -33,17 +35,36 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ============== Cart Container ============== */
+/* ================= Navbar ================= */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--navbar-height);
+  width: 100%;
+  background: var(--primary);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000; /* High value keeps navbar above everything */
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+  padding: 0 2rem;
+}
+
+/* ================= Cart Container ================= */
 .cart-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem 1.5rem 3rem;
-  background: var(--white); /* ✅ white main container */
+  background: var(--white);
   max-width: 1200px;
   margin: 2rem auto;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  margin-top: var(--navbar-height); /* ensures cart is pushed below navbar */
 }
 
 /* Title */
@@ -55,16 +76,17 @@ body {
   text-align: center;
 }
 
-/* ============== Cart Layout ============== */
+/* ================= Cart Layout ================= */
 .cart-content {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;   /* Always stack vertically, never row */
+  align-items: stretch;
   width: 100%;
   gap: 2rem;
+  margin-bottom: 2rem;
 }
 
-/* ============== Cart Items ============== */
+/* ================= Cart Items ================= */
 .cart-list {
   flex: 1 1 60%;
   display: flex;
@@ -145,7 +167,7 @@ body {
   background: #c62828;
 }
 
-/* ============== Summary Section ============== */
+/* ================= Summary Section ================= */
 .cart-summary {
   flex: 1 1 35%;
   background: #ffffff;
@@ -236,14 +258,13 @@ body {
   .table-select-wrapper {
     max-width: 100%;
   }
-
   .table-select {
     font-size: 0.95rem;
     padding: 8px 12px;
   }
 }
 
-
+/* Additional Table Select Styles */
 .table-select {
   display: block;
   width: 100%;
@@ -318,19 +339,29 @@ body {
   background: var(--secondary);
 }
 
-/* Footer */
-.cart-footer {
-  width: 100%;
-  background: #ffffff; /* ✅ changed from black to white */
-  color: var(--text-dark);
+.footer {
+  background: #1f1f1f;
   text-align: center;
+  padding: 1.35rem 0 1.15rem 0;
+  color: #f0f0f0;
   font-weight: 500;
-  padding: 1rem 0;
-  border-top: 1px solid var(--border);
-  margin-top: 2rem;
+  font-size: 1.07rem;
+  border-top: 1px solid #333;
+  margin-top: auto;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+  border-top-left-radius: 36px;
+  border-top-right-radius: 36px;
+  width: 100vw;
 }
 
-/* Responsive */
+.footer .brand-highlight {
+  color: #ffc857;
+  background: none;
+  font-weight: 700;
+  padding: 0 .19rem;
+}
+
+/* Responsive Layout */
 @media (max-width: 900px) {
   .cart-content {
     flex-direction: column;
@@ -338,4 +369,79 @@ body {
   .cart-summary {
     width: 100%;
   }
+}
+
+/* Extra responsive navbar height for small screens */
+@media (max-width: 600px) {
+  :root {
+    --navbar-height: 56px;
+  }
+  .navbar {
+    height: var(--navbar-height);
+  }
+  .cart-container {
+    margin-top: var(--navbar-height);
+  }
+}
+
+
+/* Quantity Controls */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+/* Improved button visuals */
+.quantity-controls button {
+  background: var(--white);
+  color: var(--primary);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.45rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+  transition: border-color 0.22s, background 0.18s, transform 0.13s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  user-select: none;
+}
+
+.quantity-controls button:active {
+  transform: scale(0.96);
+  background: #f9fafc;
+  border-color: var(--accent);
+}
+
+.quantity-controls button:focus {
+  border-color: var(--accent);
+  background: #faf4ed;
+}
+
+.quantity-controls button:hover:not(:disabled) {
+  border-color: var(--accent-hover);
+  background: var(--accent);
+  color: var(--white);
+  box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.08);
+}
+
+.quantity-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(35%);
+}
+
+.quantity-controls span {
+  font-weight: 500;
+  font-size: 1.08rem;
+  min-width: 2ch;
+  text-align: center;
+  color: var(--primary);
+  margin: 0 0.2rem;
 }

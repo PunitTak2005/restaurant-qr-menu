@@ -15,13 +15,18 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
+    "bytes": "^3.1.2",
+    "content-type": "^1.0.5",
     "cors": "^2.8.5",
+    "debug": "^4.4.3",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.8.7",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "type-is": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

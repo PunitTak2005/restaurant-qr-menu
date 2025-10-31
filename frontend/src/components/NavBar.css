@@ -6,7 +6,15 @@
   background-color: #1f2937;
   padding: 0.75rem 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;       /* <--- Add this! */
+  top: 0; left: 0; right: 0;
+  width: 100%;
+  z-index: 2000;
+  min-height: 62px;      /* <--- matches your code, adjust if you change padding/font */
 }
+
+/* ...the rest of your styles ... */
+
 
 .navbar ul {
   display: flex;
@@ -93,3 +101,4 @@
   border-radius: 10px;
   font-weight: 600;
 }
+

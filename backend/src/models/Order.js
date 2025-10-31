@@ -1,15 +1,7 @@
 import mongoose from "mongoose";
-import MenuItem from "../models/MenuItem.js";  // ✅ menu items reference
-import User from "../models/User.js";          // ✅ customer/user reference
-import Table from "../models/Table.js";        // ✅ table reference (model name must be "Table")
-
-
-
-
-
-
-
-
+import MenuItem from "../models/MenuItem.js";   // ✅ Menu item reference
+import User from "../models/User.js";           // ✅ User/customer reference
+import Table from "../models/Table.js";         // ✅ Table/restaurant table reference
 
 // ==================================================
 // Subdocument Schema: Ordered Item
@@ -18,7 +10,7 @@ const orderItemSchema = new mongoose.Schema(
   {
     menuItemId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: MenuItem.modelName, // references MenuItem
+      ref: MenuItem.modelName, // references MenuItem collection
       required: [true, "Menu item reference is required"],
     },
     qty: {
@@ -34,7 +26,7 @@ const orderItemSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { _id: false, storeSubdocValidationError: false }
+  { _id: false }
 );
 
 // ==================================================
@@ -42,25 +34,34 @@ const orderItemSchema = new mongoose.Schema(
 // ==================================================
 const orderSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: User.modelName,
+      required: true,
+    },
     tableId: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Table",   // ✅ must match exactly with the model name in Table.js
-  required: true,
-},
-
-    items: [
-      {
-        menuItemId: { type: mongoose.Schema.Types.ObjectId, ref: "MenuItem", required: true },
-        qty: { type: Number, required: true },
-        note: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Table.modelName, // ✅ must match exact Table model
+      required: true,
+    },
+    items: [orderItemSchema],
+    totalPrice: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: (v) => v >= 0,
+        message: "Total price must be positive.",
       },
-    ],
-    totalPrice: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "served", "completed"], default: "pending" },
+    },
+    status: {
+      type: String,
+      enum: ["pending", "preparing", "ready", "served", "paid", "cancelled"],
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
+
 // ==================================================
 // Validation Middleware
 // ==================================================
@@ -72,12 +73,12 @@ orderSchema.pre("validate", function (next) {
 });
 
 // ==================================================
-// Static Query Helpers (for Admin & Dashboard Views)
+// Static Query Helpers
 // ==================================================
 orderSchema.statics.fetchRecentOrders = function () {
   return this.find()
     .populate({ path: "userId", select: "name email role" })
-    .populate({ path: "tableId", select: "number seats status" })
+    .populate({ path: "tableId", select: "number capacity status" })
     .populate({
       path: "items.menuItemId",
       model: MenuItem.modelName,
@@ -89,7 +90,7 @@ orderSchema.statics.fetchRecentOrders = function () {
 orderSchema.statics.getPopulatedOrderById = function (id) {
   return this.findById(id)
     .populate({ path: "userId", select: "name email role" })
-    .populate({ path: "tableId", select: "number seats status" })
+    .populate({ path: "tableId", select: "number capacity status" })
     .populate({
       path: "items.menuItemId",
       model: MenuItem.modelName,
@@ -98,7 +99,7 @@ orderSchema.statics.getPopulatedOrderById = function (id) {
 };
 
 // ==================================================
-// Safe Model Export
+// Safe Export
 // ==================================================
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 export default Order;

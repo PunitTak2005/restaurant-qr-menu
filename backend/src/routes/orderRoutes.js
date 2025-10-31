@@ -1,216 +1,194 @@
-import express from "express";
-import mongoose from "mongoose";
+import express from 'express';
+import mongoose from 'mongoose';
 
-// ===== Models =====
-import Order from "../models/Order.js";
-import MenuItem from "../models/MenuItem.js";
-import User from "../models/User.js";
-import Table from "../models/Table.js";
+import Order from '../models/Order.js';
+import MenuItem from '../models/MenuItem.js';
+import User from '../models/User.js';
+import Table from '../models/Table.js';
+
+// Import auth middleware and authorize helper
+import authMiddleware, { authorize } from '../middlewares/auth.js';
+
+import {
+  getOrderById,
+  getOrdersByUser,
+} from '../controllers/orderController.js';
 
 const router = express.Router();
 
-/* ===========================================================
-   GET ALL ORDERS (Admin / Staff)
-   Populates: user, table, and ordered items
-   =========================================================== */
-router.get("/", async (req, res) => {
+// --- GET ALL ORDERS FOR CURRENT AUTHENTICATED USER ---
+// Allow customer, staff, admin, owner roles
+router.get('/my', authMiddleware, authorize('customer', 'admin', 'owner'), async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(400).json({ error: 'User not authenticated' });
+    }
+    const orders = await Order.find({ userId })
+      .populate({ path: 'userId', select: 'name email role' })
+      .populate({ path: 'tableId', select: 'number seats status' })
+      .populate({
+        path: 'items.menuItemId',
+        select: 'name price category image active',
+      })
+      .sort({ createdAt: -1 });
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch your orders' });
+  }
+});
+
+// --- GET ALL ORDERS FOR A USER (admin/staff view) ---
+router.get('/user/:userId', getOrdersByUser);
+
+// --- GET ALL ORDERS (admin/global) ---
+router.get('/', async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate({ path: "userId", select: "name email role" })
-      .populate({ path: "tableId", select: "number capacity" })
+      .populate({ path: 'userId', select: 'name email role' })
+      .populate({ path: 'tableId', select: 'number seats status' })
       .populate({
-        path: "items.menuItemId",
-        select: "name price category image availability",
+        path: 'items.menuItemId',
+        select: 'name price category image active',
       })
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, count: orders.length, orders });
   } catch (err) {
-    console.error("❌ Error fetching orders:", err.message);
     res.status(500).json({
       success: false,
-      error: "Server error fetching orders.",
+      error: 'Server error fetching orders.',
     });
   }
 });
 
-/* ===========================================================
-   GET SINGLE ORDER BY ID
-   =========================================================== */
-router.get("/:id", async (req, res) => {
+// --- GET SINGLE ORDER (by ID) ---
+router.get('/:id', getOrderById);
+
+// --- CREATE NEW ORDER ---
+router.post('/', async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid Order ID." });
+    const { userId, tableId, items, totalPrice, status } = req.body;
+    if (
+      !mongoose.Types.ObjectId.isValid(userId) ||
+      !mongoose.Types.ObjectId.isValid(tableId)
+    ) {
+      return res.status(400).json({ success: false, error: 'Invalid user or table.' });
     }
-
-    const order = await Order.findById(id)
-      .populate({ path: "userId", select: "name email" })
-      .populate({ path: "tableId", select: "number capacity" })
-      .populate({
-        path: "items.menuItemId",
-        select: "name price category image availability",
-      });
-
-    if (!order)
-      return res
-        .status(404)
-        .json({ success: false, error: "Order not found." });
-
-    res.status(200).json({ success: true, order });
-  } catch (err) {
-    console.error("💥 Error getting order:", err.message);
-    res.status(500).json({
-      success: false,
-      error: "Server error retrieving order.",
-    });
-  }
-});
-
-/* ===========================================================
-   CREATE NEW ORDER
-   Validates table, menu items, and optional user
-   =========================================================== */
-router.post("/", async (req, res) => {
-  try {
-    const { tableId, items, totalPrice, userId, status } = req.body;
-
-    if (!tableId || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing fields: tableId and at least one item required.",
-      });
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ success: false, error: 'No items in order.' });
     }
-
-    if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid userId reference." });
-    }
-
-    // Validate all menu items
-    for (const item of items) {
-      if (
-        !item.menuItemId ||
-        !mongoose.Types.ObjectId.isValid(item.menuItemId)
-      ) {
-        return res
-          .status(400)
-          .json({ success: false, error: "Bad menuItemId detected." });
-      }
-
-      const exists = await MenuItem.exists({ _id: item.menuItemId });
-      if (!exists) {
-        return res.status(404).json({
-          success: false,
-          error: `Menu item not found: ${item.menuItemId}`,
-        });
+    for (const it of items) {
+      if (!mongoose.Types.ObjectId.isValid(it.menuItemId)) {
+        return res.status(400).json({ success: false, error: 'Invalid menuItem in items.' });
       }
     }
-
-    const newOrder = new Order({
+    const order = await Order.create({
+      userId,
       tableId,
       items,
-      userId,
       totalPrice,
-      status: status || "pending",
+      status: status || 'pending',
     });
-
-    const saved = await newOrder.save();
-    console.log("✅ Order created:", saved._id);
-
-    // Optional socket broadcast if available
-    if (req.io) req.io.emit("order:new", saved);
-
-    res.status(201).json({ success: true, order: saved });
+    const populatedOrder = await Order.findById(order._id)
+      .populate({ path: 'userId', select: 'name email role' })
+      .populate({ path: 'tableId', select: 'number seats status' })
+      .populate({
+        path: 'items.menuItemId',
+        select: 'name price category image active',
+      });
+    if (req.io) req.io.emit('order:new', populatedOrder);
+    res.status(201).json({ success: true, order: populatedOrder });
   } catch (err) {
-    console.error("💥 Error creating order:", err.message);
     res.status(500).json({
       success: false,
-      error: "Server error creating order.",
+      error: 'Server error creating order.',
     });
   }
 });
 
-/* ===========================================================
-   UPDATE ORDER STATUS (Staff/Admin)
-   =========================================================== */
-router.patch("/:id/status", async (req, res) => {
+// --- UPDATE ORDER STATUS (PATCH) ---
+router.patch('/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid Order ID." });
-    }
-
     const allowed = [
-      "pending",
-      "preparing",
-      "ready",
-      "served",
-      "paid",
-      "cancelled",
+      'pending', 'preparing', 'ready', 'served', 'paid', 'cancelled'
     ];
-    if (!allowed.includes(status)) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid status value." });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, error: 'Invalid Order ID.' });
     }
-
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ success: false, error: 'Invalid status value.' });
+    }
     const updated = await Order.findByIdAndUpdate(
       id,
       { status },
       { new: true }
-    );
-
+    )
+      .populate({ path: 'userId', select: 'name email role' })
+      .populate({ path: 'tableId', select: 'number seats status' })
+      .populate({
+        path: 'items.menuItemId',
+        select: 'name price category image active',
+      });
     if (!updated)
-      return res
-        .status(404)
-        .json({ success: false, error: "Order not found." });
-
-    if (req.io) req.io.emit("order:update", updated);
-
+      return res.status(404).json({ success: false, error: 'Order not found.' });
+    if (req.io) req.io.emit('order:update', updated);
     res.status(200).json({ success: true, order: updated });
   } catch (err) {
-    console.error("💥 Error updating order status:", err.message);
-    res.status(500).json({
-      success: false,
-      error: "Server error updating status.",
-    });
+    res.status(500).json({ success: false, error: 'Server error updating status.' });
   }
 });
 
-/* ===========================================================
-   DELETE ORDER (Admin only)
-   =========================================================== */
-router.delete("/:id", async (req, res) => {
+// --- UPDATE ORDER STATUS (PUT, same logic as PATCH) ---
+router.put('/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id))
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid Order ID." });
-
-    const del = await Order.findByIdAndDelete(id);
-    if (!del)
-      return res
-        .status(404)
-        .json({ success: false, error: "Order not found for deletion." });
-
-    if (req.io) req.io.emit("order:delete", del._id);
-
-    res.status(200).json({ success: true, message: "Order deleted." });
+    const { status } = req.body;
+    const allowed = [
+      'pending', 'preparing', 'ready', 'served', 'paid', 'cancelled'
+    ];
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, error: 'Invalid Order ID.' });
+    }
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ success: false, error: 'Invalid status value.' });
+    }
+    const updated = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    )
+      .populate({ path: 'userId', select: 'name email role' })
+      .populate({ path: 'tableId', select: 'number seats status' })
+      .populate({
+        path: 'items.menuItemId',
+        select: 'name price category image active',
+      });
+    if (!updated)
+      return res.status(404).json({ success: false, error: 'Order not found.' });
+    if (req.io) req.io.emit('order:update', updated);
+    res.status(200).json({ success: true, order: updated });
   } catch (err) {
-    console.error("💥 Error deleting order:", err.message);
-    res.status(500).json({
-      success: false,
-      error: "Server error deleting order.",
-    });
+    res.status(500).json({ success: false, error: 'Server error updating status.' });
+  }
+});
+
+// --- DELETE ORDER ---
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, error: 'Invalid Order ID.' });
+    }
+    const order = await Order.findByIdAndDelete(id);
+    if (!order)
+      return res.status(404).json({ success: false, error: 'Order not found.' });
+    if (req.io) req.io.emit('order:delete', order);
+    res.status(200).json({ success: true, message: 'Order deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Server error deleting order.' });
   }
 });
 
