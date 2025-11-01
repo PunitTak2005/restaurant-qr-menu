@@ -8,7 +8,7 @@ import "./MenuPage.css";
 import vegBurgerImg from "../assets/veg-burger.jpg";
 import pastaImg from "../assets/pasta.jpg";
 import coldCoffeeImg from "../assets/cold-coffee.jpg";
-import pizzaImg from "../assets/pizza.jpg";
+import pasta from "/src/assets/pasta.jpg";
 import friesImg from "../assets/fries.jpg";
 import chocolateShakeImg from "../assets/chocolate-shake.jpg";
 import paneerWrapImg from "../assets/paneer-wrap.jpg";
