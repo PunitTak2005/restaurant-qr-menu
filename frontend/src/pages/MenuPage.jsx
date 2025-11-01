@@ -69,7 +69,7 @@ const sampleMenu = [
     _id: "674f9a12345abc0011223347",
     name: "Veg Pizza",
     price: 250,
-    image: pizzaImg,
+    image: pizza,
     description:
       "Stone-baked pizza layered with tomato sauce, mozzarella, and fresh seasonal vegetables.",
   },
