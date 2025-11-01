@@ -2,8 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import http from "http";
-import { Server as SocketIOServer } from "socket.io";
 
 // Route Imports
 import orderRoutes from "./routes/orderRoutes.js";
@@ -39,25 +37,6 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // -----------------------
-// CREATE HTTP + SOCKET SERVER
-// -----------------------
-const server = http.createServer(app);
-const io = new SocketIOServer(server, {
-  cors: {
-    origin: CLIENT_URL,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-  },
-  transports: ["websocket", "polling"],
-});
-export { io };
-
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
-
-// -----------------------
 // BASIC ENDPOINTS
 // -----------------------
 app.get("/", (req, res) => {
@@ -73,22 +52,6 @@ app.get("/", (req, res) => {
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
-
-// -----------------------
-// SOCKET.IO EVENTS HANDLING
-// -----------------------
-io.on("connection", (socket) => {
-  console.log("🟢 Client connected:", socket.id);
-
-  socket.on("order:new", (order) => {
-    console.log("📦 New order event received:", order);
-    io.emit("order:update", order);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("🔴 Client disconnected:", socket.id);
-  });
-});
 
 // -----------------------
 // 404 FALLBACK
@@ -107,7 +70,7 @@ const start = async () => {
       useUnifiedTopology: true
     });
     console.log("✅ MongoDB connected successfully");
-    server.listen(PORT, "0.0.0.0", () =>
+    app.listen(PORT, "0.0.0.0", () =>
       console.log(`🚀 Server running on http://localhost:${PORT}`)
     );
   } catch (err) {
