@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
-import "./Navbar.css";
+import "./NavBar.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
