@@ -1,41 +1,32 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// https://vite.dev/config/
+// [https://vite.dev/config/](https://vite.dev/config/)
 export default defineConfig({
   plugins: [react()],
 
-  server: {
-    // ✅ SPA Fallback for React Router (prevents 404 on client routes like /admin/dashboard)
-    historyApiFallback: true,
+  // Remove development-only proxy for production!
+  // server: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "http://localhost:5000", // Only for dev!
+  //       changeOrigin: true,
+  //       secure: false,
+  //     },
+  //   },
+  // },
 
-    // ✅ Proxy API requests in dev to your Node/Express backend
-    proxy: {
-      "/api": {
-        target: "http://localhost:5000",   // your backend server address
-        changeOrigin: true,                 // avoids CORS blocking
-        secure: false,                      // allow self‑signed SSL in dev (ignored for http)
-        // To strip "/api" prefix:
-        // rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
-  },
-
-  // Optional: Build chunk warnings and manual chunk splitting
   build: {
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      // Example: Create vendor chunk
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
-          vendor: ['axios', 'socket.io-client'], // add common libraries here
+          vendor: ['axios'], // Remove 'socket.io-client' if unused!
         },
       },
     },
   },
 
-  // Optional: If deploying to Netlify/Vercel, set base path if not at root
-  // base: "/",
+  // base: "/", // Set base path if your frontend is deployed on a sub-path
 });
- 
