@@ -1,4 +1,3 @@
-// src/components/BarChart.jsx
 import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
@@ -26,7 +25,7 @@ ChartJS.register(
   ArcElement
 );
 
-const API_PREFIX = "http://localhost:5000/api";
+const API_PREFIX = import.meta.env.VITE_API_PREFIX; // Use env variable for API
 
 function BarChart() {
   const [analytics, setAnalytics] = useState({
