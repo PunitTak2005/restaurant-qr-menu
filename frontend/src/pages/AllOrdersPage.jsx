@@ -1,6 +1,8 @@
-// src/pages/AllOrdersPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
+// Use environment variable for API base
+const API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
 const AllOrdersPage = () => {
   const { userId } = useParams();
@@ -10,7 +12,7 @@ const AllOrdersPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/orders/user/${userId}`);
+        const res = await fetch(`${API_PREFIX}/orders/user/${userId}`);
         const data = await res.json();
         if (data.success) setOrders(data.orders);
         else setError(data.error || "Failed to load orders");
