@@ -25,8 +25,6 @@
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.8.7",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
     "type-is": "^2.0.1"
   },
   "devDependencies": {
