@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
-import { Server as SocketIOServer } from "socket.io";
 
 // Route imports
 import adminRoutes from "./routes/admin.js"; // ✅
@@ -71,29 +70,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, error: err.message });
 });
 
-// Initialize Socket.IO server after HTTP server is created
-const io = new SocketIOServer(server, {
-  cors: {
-    origin: FRONTEND_ORIGIN,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-  },
-});
-export { io };
-
-io.on("connection", (socket) => {
-  console.log("🟢 Client connected:", socket.id);
-  socket.on("disconnect", () => {
-    console.log("🔴 Client disconnected:", socket.id);
-  });
-  // socket.on("order:new", (order) => { io.emit("order:update", order); });
-});
-
-// Attach io instance to every request for use in routes/controllers
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
 
 // Startup logic
 const startServer = async () => {
