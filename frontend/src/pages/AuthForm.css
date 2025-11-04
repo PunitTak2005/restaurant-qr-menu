@@ -1,0 +1,185 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+/* Container for the sign-in page (side-by-side on desktop, stacked on mobile) */
+.auth-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  min-height: 520px;
+  padding: 38px 0 30px 0;
+  background: linear-gradient(120deg, #fffbe8 60%, #ffe5b2 100%);
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+  min-height: 100vh;
+  margin-top: 82px; /* <--- ensures card never overlaps navbar */
+}
+
+
+@media (max-width: 700px) {
+  .auth-container {
+    flex-direction: column;
+    gap: 0px;
+    align-items: center;
+    min-height: unset;
+    padding: 24px 0 16px 0;
+  }
+}
+
+/* Illustration and warning/caption */
+.auth-visual-warning {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  margin-right: 6vw;
+}
+
+.auth-visual-warning img {
+  width: 170px;
+  height: 170px;
+  object-fit: contain;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(44,92,120,0.13);
+}
+
+.auth-visual-warning .caption {
+  color: #b71c1c;
+  background: #ffecec;
+  font-weight: 600;
+  font-size: 1.09em;
+  border-radius: 10px;
+  padding: 9px 24px;
+  text-align: center;
+  max-width: 265px;
+}
+
+/* Stylish form card */
+.auth-form {
+  background: #fff;
+  padding: 2.0rem 1.2rem;
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(44,62,80, 0.11), 0 1.5px 8px rgba(217,119,6,0.04);
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.02rem;
+  box-sizing: border-box;
+  overflow: visible !important;
+  max-height: none !important;
+  scrollbar-width: none;
+}
+.auth-form::-webkit-scrollbar { display: none; }
+
+/* Form fields and labels */
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #d97706;
+  margin-bottom: 1.1rem;
+  text-align: center;
+  letter-spacing: 0.35px;
+  word-spacing: 1px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #7c6f57;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.59rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #e0e4e4;
+  font-size: 0.96rem;
+  transition: border 0.23s, box-shadow 0.22s;
+  background: #faf9f7;
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 2.5px rgba(217, 119, 6, 0.14);
+  outline: none;
+}
+
+.form-group select {
+  color: #444;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23d97706' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1em center;
+  background-size: 1em;
+}
+
+/* Button styling */
+.auth-btn {
+  background: linear-gradient(93deg, #e7a34d 15%, #d97706 100%);
+  color: #fff;
+  border-radius: 30px;
+  border: none;
+  font-size: 0.97rem;
+  font-weight: 600;
+  padding: 0.7rem 0;
+  margin-top: 0.35rem;
+  cursor: pointer;
+  box-shadow: 0 2px 11px rgba(44,62,80, 0.08);
+  transition: background 0.25s, transform 0.12s, box-shadow 0.16s;
+}
+.auth-btn:hover {
+  background: linear-gradient(91deg, #fbbf24 30%, #e7a34d 100%);
+  color: #333;
+  box-shadow: 0 4px 17px rgba(44,62,80,0.15);
+  transform: translateY(-1px) scale(1.012);
+}
+
+/* Signup link */
+.auth-link-text {
+  text-align: center;
+  font-size: 0.92rem;
+  color: #7c6f57;
+  margin-top: 0.7rem;
+}
+.auth-link-text a {
+  color: #e7a34d;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.auth-link-text a:hover {
+  color: #d97706;
+  text-decoration: underline;
+}
+
+/* Autofill style */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 6000s;
+  background-color: #ffe4ba !important;
+  -webkit-text-fill-color: #d97706 !important;
+}
+
+/* Mobile styles */
+@media (max-width: 480px) {
+  .auth-form {
+    padding: 0.8rem 0.3rem;
+    max-width: 95vw;
+    border-radius: 11px;
+  }
+  .auth-title {
+    font-size: 1.1rem;
+  }
+}

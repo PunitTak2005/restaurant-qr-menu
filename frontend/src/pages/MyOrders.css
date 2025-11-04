@@ -1,0 +1,221 @@
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  border-radius: 0; /* Remove bottom curve */
+  background-color: #f7f9fa; /* subtle light background for contrast */
+}
+
+
+/* Main container grows for sticky footer */
+.my-orders-container {
+  max-width: 880px;
+  margin: 2rem auto 4rem auto;
+  padding: 2.5rem 2.5rem 1.2rem 2.5rem;
+  background: #ffffff;
+  border-radius: 1.4rem 1.4rem 0 0; /* Only top corners rounded */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  flex: 1 0 auto; /* sticky footer support */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Page title - center with spacing */
+.my-orders-title {
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  color: #34495e;
+  letter-spacing: 0.8px;
+  text-align: center;
+}
+
+/* List reset & alignment */
+.orders-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 720px;
+}
+
+/* Order card styling with softer shadows and smooth transitions */
+.order-card {
+  background: #eaf8fb;
+  border: 1px solid #39a9db;
+  border-radius: 1.1rem;
+  margin-bottom: 2.5rem;
+  padding: 1.8rem 2.8rem 1.5rem 2.8rem;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
+  color: #2c3e50;
+  transition: box-shadow 0.3s ease, background-color 0.35s ease;
+  cursor: default;
+}
+
+.order-card:hover {
+  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.12);
+  background-color: #c6e8f9;
+}
+
+/* Header flex balanced with spacing */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+}
+
+/* Order ID styling */
+.order-id {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #117aaf;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+/* Status badge with pill shape and shadow */
+.order-status {
+  text-transform: capitalize;
+  font-size: 1.05em;
+  font-weight: 700;
+  border-radius: 1.5em;
+  padding: 0.3em 1.5em;
+  color: #fff;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12);
+  border: none;
+  letter-spacing: 0.7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Distinct colors for statuses */
+.order-status.ready { background-color: #27ae60; }
+.order-status.served { background-color: #39a9db; }
+.order-status.paid { background-color: #34495e; }
+.order-status.cancelled { background-color: #c0392b; }
+.order-status.pending { background-color: #f39c12; }
+.order-status.preparing { background-color: #3498db; }
+
+/* Metadata flex with gap */
+.order-meta {
+  display: flex;
+  gap: 3em;
+  font-size: 1.15em;
+  color: #7f8c8d;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* Order date subtle italic */
+.order-date {
+  font-style: italic;
+  color: #95a5a6;
+  font-size: 1.05em;
+  white-space: nowrap;
+}
+
+/* Item list styling */
+.order-items-list {
+  margin-top: 0.9em;
+  padding-left: 0.75em;
+  margin-bottom: 0.4em;
+  list-style-type: disc;
+}
+
+/* Individual item stylings with spacing */
+.order-item {
+  padding: 0.45em 0;
+  font-size: 1.15em;
+  color: #34495e;
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+/* Item name emphasis */
+.order-item span.menu-item-name {
+  font-weight: 700;
+  font-size: 1.15em;
+  color: #117aaf;
+}
+
+/* Quantity subtle with margin */
+.order-item span.qty {
+  font-size: 1em;
+  color: #95a5a6;
+  margin-left: auto;
+}
+
+/* Missing item highlight */
+.missing-item {
+  color: #d35400;
+  font-style: italic;
+  background: #fdf3e7;
+  padding: 0.35em 1.3em;
+  border-radius: 0.7em;
+  font-size: 1em;
+  display: inline-block;
+  margin-top: 1em;
+}
+
+/* Sticky Footer */
+footer {
+  width: 100%;
+  background: #232323;  /* dark footer background */
+  color: #fff;
+  text-align: center;
+  padding: 1.2rem 0 1rem 0;
+  margin-top: auto;    /* push to bottom of flex column */
+  border-radius: 0;    /* no bottom curve */
+  font-size: 1.1em;
+  letter-spacing: 0.5px;
+  box-shadow: 0 -2px 20px rgba(57, 169, 219, 0.08);
+  user-select: none;
+}
+
+/* Parent wrapper with rounded top corners */
+.outer-wrapper {
+  border-radius: 1.4rem 1.4rem 0 0; /* Only top corners rounded */
+}
+
+/* Responsive tweaks */
+@media (max-width: 750px) {
+  .my-orders-container {
+    max-width: 98vw;
+    padding: 1rem 1rem;
+    border-radius: 1.4rem 1.4rem 0 0;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .order-card {
+    padding: 1.2rem 1.5rem 1rem 1.5rem;
+  }
+
+  .order-meta {
+    gap: 1.5em;
+  }
+
+  .order-item {
+    font-size: 1.05em;
+  }
+}
