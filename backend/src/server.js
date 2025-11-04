@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
-import { Server as SocketIOServer } from "socket.io";
+
 
 // Route Imports
 import orderRoutes from "./routes/orderRoutes.js";
@@ -69,20 +69,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);              // <<✅ ADD THIS LINE
 
 // -----------------------
-// SOCKET.IO EVENTS HANDLING
-// -----------------------
-io.on("connection", (socket) => {
-  console.log("🟢 Client connected:", socket.id);
 
-  socket.on("order:new", (order) => {
-    console.log("📦 New order event received:", order);
-    io.emit("order:update", order);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("🔴 Client disconnected:", socket.id);
-  });
-});
 
 // -----------------------
 // 404 FALLBACK
