@@ -1,6 +1,7 @@
 // Simple fetch wrapper
 export async function apiFetch(endpoint, options = {}) {
-  const baseUrl = "http://localhost:5000/api"; // Change as needed
+  // Use your deployed backend API URL here:
+  const baseUrl = "https://restaurant-qr-menu-api.onrender.com/api"; // <-- Update to your backend's Render URL
   const response = await fetch(`${baseUrl}${endpoint}`, options);
   if (!response.ok) throw new Error("API Error");
   return response.json();
