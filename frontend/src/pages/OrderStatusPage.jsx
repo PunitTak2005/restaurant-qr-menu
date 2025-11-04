@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
+
 import "./OrderStatusPage.css";
 
 // --- Fetch order from backend API ---
@@ -41,8 +41,7 @@ const fetchOrderById = async (id) => {
   }
 };
 
-// -- Socket connection --
-const socket = io("http://localhost:5000");
+
 
 // Human-readable order statuses
 const statusMessages = {
@@ -69,22 +68,7 @@ const OrderStatusPage = () => {
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // --- SOCKET.IO REAL-TIME CONNECTION ---
-  useEffect(() => {
-    socket.on("connect", () => setIsSocketConnected(true));
-    socket.on("disconnect", () => setIsSocketConnected(false));
-    socket.on("order-status", (data) => {
-      if (String(data.orderId) === String(id)) {
-        setStatus(data.status);
-        if (data.order) setOrder(data.order);
-      }
-    });
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("order-status");
-    };
-  }, [id]);
+
 
   // --- INITIAL FETCH and POLLING ---
   useEffect(() => {
