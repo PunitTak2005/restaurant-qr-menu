@@ -43,6 +43,21 @@ export const getAnalytics = async (req, res) => {
           orderCount: { $sum: "$items.qty" }
         }
       },
+      {
+        $lookup: {
+          from: "menuitems",
+          localField: "_id",
+          foreignField: "_id",
+          as: "itemDetails"
+        }
+      },
+      { $unwind: "$itemDetails" },
+      {
+        $project: {
+          name: "$itemDetails.name",
+          orderCount: 1
+        }
+      },
       { $sort: { orderCount: -1 } },
       { $limit: 5 }
     ]);
