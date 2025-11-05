@@ -25,6 +25,7 @@ ChartJS.register(
   ChartDataLabels
 );
 
+// Set API base URL via VITE env (recommended for Render) or fallback
 const API_PREFIX =
   import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
 
@@ -51,13 +52,14 @@ const AdminDashboard = () => {
   const [analyticsError, setAnalyticsError] = useState("");
 
   useEffect(() => {
+    // Fetch orders
     const fetchOrders = async () => {
       try {
         const res = await axios.get(`${API_PREFIX}/orders`);
         setOrders(res.data?.orders || []);
         setError("");
       } catch (err) {
-        setError("Failed to fetch orders. Please verify backend connection.");
+        setError("Failed to fetch orders. Please verify backend connection & CORS settings.");
       } finally {
         setLoading(false);
       }
@@ -66,6 +68,7 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
+    // Fetch analytics
     const fetchAnalytics = async () => {
       try {
         const res = await axios.get(`${API_PREFIX}/admin/analytics`);
@@ -74,8 +77,8 @@ const AdminDashboard = () => {
       } catch (err) {
         setAnalyticsError(
           err?.response
-            ? `Analytics error: ${err.response.status} ${err.response.statusText}`
-            : "Failed to fetch analytics. Backend may be down."
+            ? `Analytics error: ${err.response.status} ${err.response.statusText} - check backend logs.`
+            : "Failed to fetch analytics. Backend or API may be down, or CORS misconfigured."
         );
       } finally {
         setAnalyticsLoading(false);
@@ -104,14 +107,38 @@ const AdminDashboard = () => {
     }]
   };
 
-  // Optionally add chart options/legends as desired
+  // Chart options
+  const pieOptions = {
+    plugins: {
+      legend: { display: true },
+      datalabels: {
+        color: '#333',
+        formatter: (value, context) => value,
+      }
+    }
+  };
+
+  const barOptions = {
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        color: '#1a237e',
+        font: { weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  };
 
   return (
     <div className="admin-dashboard-container">
       <header className="admin-header">
         <h1>Admin Dashboard</h1>
         <p>
-          {"Monitor orders, revenue & table usage."}
+          Monitor orders, revenue & table usage.
         </p>
       </header>
 
@@ -157,7 +184,7 @@ const AdminDashboard = () => {
             <div className="chart-card">
               <h3>Top Items</h3>
               {pieData.labels.length > 0 ? (
-                <Pie data={pieData} options={{ plugins: { legend: { display: true } }}} />
+                <Pie data={pieData} options={pieOptions} />
               ) : (
                 <div className="chart-empty">No top item data</div>
               )}
@@ -165,7 +192,7 @@ const AdminDashboard = () => {
             <div className="chart-card">
               <h3>Table Usage</h3>
               {barData.labels.length > 0 ? (
-                <Bar data={barData} options={{ plugins: { legend: { display: false } }}} />
+                <Bar data={barData} options={barOptions} />
               ) : (
                 <div className="chart-empty">No table usage data</div>
               )}
@@ -174,7 +201,7 @@ const AdminDashboard = () => {
         </section>
       )}
 
-      {/* Optionally, add a recent orders table here for admins */}
+      {/* Optional: add a recent orders table below for admin */}
     </div>
   );
 };
