@@ -7,7 +7,8 @@ const router = express.Router();
 // GET /api/tables — List all tables (admin/staff/table select)
 router.get("/", async (req, res) => {
   try {
-    const tables = await Table.find({}, "number status seats active"); // fetch id, number, and any info you want in dropdown
+    // Only fetch tables marked as active for selection
+    const tables = await Table.find({ active: true }, "number status seats _id"); 
     res.json({ success: true, tables });
   } catch (err) {
     res.status(500).json({ success: false, error: "Failed to fetch tables" });
