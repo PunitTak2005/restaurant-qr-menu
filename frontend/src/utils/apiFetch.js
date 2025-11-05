@@ -1,6 +1,11 @@
 // src/utils/apiFetch.js
+
+// Use environment variable if set; fallback to Render prod API
+const baseUrl =
+  import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
+
 export async function apiFetch(endpoint, options = {}) {
-  const baseUrl = "https://restaurant-qr-menu-stjp.onrender.com/api"; // Your Render backend URL
+  // Ensure there's only single slash between baseUrl and endpoint
   const url =
     endpoint.startsWith("/")
       ? baseUrl + endpoint
@@ -9,7 +14,7 @@ export async function apiFetch(endpoint, options = {}) {
   const opts = {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers || {}),
     },
   };
