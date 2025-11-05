@@ -1,29 +1,62 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminDashboard.css";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+} from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { Bar, Pie } from "react-chartjs-2";
 
-// ENVIRONMENT-AWARE API PREFIX
+// Register chart.js plugins/components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartDataLabels
+);
+
+// IMPORTANT: Set as env for deployment production; localhost for dev
 const API_PREFIX =
   import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
-
-const STATUS_OPTIONS = [
-  "pending", "preparing", "ready", "served", "paid", "cancelled"
+const pieColors = [
+  "#4cc472", "#36A2EB", "#FF6384", "#FFCE56", "#a065ec",
+  "#10a18a", "#2b87ff", "#ff9c23", "#512da8", "#c51162"
 ];
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
+  const [analytics, setAnalytics] = useState({
+    todayOrders: 0,
+    weekOrders: 0,
+    monthOrders: 0,
+    todayRevenue: 0,
+    weekRevenue: 0,
+    monthRevenue: 0,
+    topItems: [],
+    tableUsage: [],
+  });
   const [loading, setLoading] = useState(true);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [statusUpdates, setStatusUpdates] = useState({});
+  const [analyticsError, setAnalyticsError] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        // Fetch all orders for admin
         const res = await axios.get(`${API_PREFIX}/orders`);
-        setOrders(res.data?.data || res.data?.orders || []);
+        setOrders(res.data?.orders || []);
       } catch (err) {
-        console.error("❌ Error loading orders:", err.message);
         setError("Failed to fetch orders. Please verify backend connection.");
       } finally {
         setLoading(false);
@@ -32,130 +65,229 @@ const AdminDashboard = () => {
     fetchOrders();
   }, []);
 
-  // Handle status change in dropdown
-  const handleStatusChange = (orderId, newStatus) => {
-    setStatusUpdates({ ...statusUpdates, [orderId]: newStatus });
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await axios.get(`${API_PREFIX}/admin/analytics`);
+        setAnalytics(res.data || {});
+        setAnalyticsError("");
+      } catch (err) {
+        setAnalyticsError(
+          err?.response
+            ? `Analytics error: ${err.response.status} ${err.response.statusText}`
+            : "Failed to fetch analytics. Backend may be down."
+        );
+      } finally {
+        setAnalyticsLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
+  // Chart Data
+  const barOrdersData = {
+    labels: ["Today", "This Week", "This Month"],
+    datasets: [
+      {
+        label: "Total Orders",
+        data: [analytics.todayOrders, analytics.weekOrders, analytics.monthOrders],
+        backgroundColor: "#2b87ff",
+        borderRadius: 8,
+        maxBarThickness: 42,
+      },
+      {
+        label: "Total Revenue",
+        data: [analytics.todayRevenue, analytics.weekRevenue, analytics.monthRevenue],
+        backgroundColor: "#44c77b",
+        borderRadius: 8,
+        maxBarThickness: 42,
+      },
+    ],
   };
 
-  // Send status update to backend (as admin)
-  const updateOrderStatus = async (orderId) => {
-    try {
-      const newStatus = statusUpdates[orderId];
-      const token = localStorage.getItem("token"); // Admin token
-      await axios.patch(
-        `${API_PREFIX}/orders/${orderId}/status`,
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setOrders((prev) =>
-        prev.map((order) =>
-          order._id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
-    } catch (err) {
-      alert("Failed to update order status!");
-      console.error(err);
-    }
+  const pieTopItemsData = {
+    labels: analytics.topItems.map((item) => item.name),
+    datasets: [
+      {
+        label: "Top Ordered Items",
+        data: analytics.topItems.map((item) => item.qty || item.orderCount), // handle different backend keys
+        backgroundColor: analytics.topItems.map((_, idx) => pieColors[idx % pieColors.length]),
+        borderWidth: 1,
+        borderColor: "#fafbfc",
+      },
+    ],
   };
 
-  if (loading) return <p className="loading">Loading orders...</p>;
-  if (error) return <p className="error">{error}</p>;
+  const barChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" },
+      title: { display: true, text: "Order Volume & Revenue per Period" },
+      datalabels: {
+        color: "#212529",
+        anchor: "end",
+        align: "top",
+        font: { weight: "bold", size: 16 },
+        formatter: (value) => value,
+      },
+    },
+    scales: { y: { beginAtZero: true, grid: { color: "#e0e7ef" } }, x: { grid: { color: "#e0e7ef" } } },
+  };
+
+  const pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "right", labels: { boxWidth: 20 } },
+      title: { display: true, text: "Top Ordered Items" },
+      datalabels: {
+        color: "#212529",
+        font: { weight: "bold", size: 15 },
+        formatter: (value) => value,
+      },
+    },
+  };
 
   return (
     <div className="admin-container">
       <header className="admin-header">
         <h1>Admin Dashboard</h1>
-        <p>
-          Welcome Admin! View, manage and update all restaurant orders.
+        <p style={{ fontSize: "1.1rem" }}>
+          Monitor live sales, revenue, and order trends for your restaurant.
         </p>
       </header>
-      <section className="orders-section">
-        <h2>All Orders Overview</h2>
 
-        {orders.length === 0 ? (
-          <p>No orders found.</p>
+      {/* Analytics Metrics */}
+      <section className="analytics-section" aria-label="Analytics Overview">
+        <h2 className="section-header">Analytics Overview</h2>
+        {analyticsLoading ? (
+          <p className="loading">Loading analytics...</p>
+        ) : analyticsError ? (
+          <p className="error">{analyticsError}</p>
         ) : (
-          <table className="orders-table">
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Table</th>
-                <th>Order Items</th>
-                <th>Total (₹)</th>
-                <th>Status</th>
-                <th>Time</th>
-                <th>Update Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order._id}>
-                  <td data-label="Customer">
-                    {order.userId?.name || "Guest"}
-                    <br />
-                    <small>{order.userId?.email || "—"}</small>
-                  </td>
-                  <td data-label="Table">
-                    {order.tableId?.number ?? "—"}
-                  </td>
-                  <td data-label="Items">
-                    {order.items.map((it) => (
-                      <div key={it._id}>
-                        {it.menuItemId?.name || "(Unknown Item)"} × {it.qty}
-                      </div>
-                    ))}
-                  </td>
-                  <td data-label="Total">₹{order.totalPrice}</td>
-                  <td
-                    data-label="Status"
-                    className={`status ${order.status}`}
-                  >
-                    {order.status}
-                  </td>
-                  <td data-label="Time">
-                    {new Date(order.createdAt).toLocaleString("en-IN", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      day: "2-digit",
-                      month: "short",
-                    })}
-                  </td>
-                  <td data-label="Update Status">
-                    <select
-                      value={statusUpdates[order._id] || order.status}
-                      onChange={(e) =>
-                        handleStatusChange(order._id, e.target.value)
-                      }
-                    >
-                      {STATUS_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={() => updateOrderStatus(order._id)}
-                      style={{
-                        marginLeft: "8px",
-                        padding: "5px 12px",
-                        background: "#c0392b",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "0.5em",
-                        cursor: "pointer",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Update
-                    </button>
-                  </td>
+          <div className="metrics-group" style={{ marginBottom: 28 }}>
+            <div className="metric-card accent-border">
+              <span className="metric-icon" role="img" aria-label="orders">📦</span>
+              <h4>Orders</h4>
+              <ul>
+                <li>Today: <b>{analytics.todayOrders}</b></li>
+                <li>This week: <b>{analytics.weekOrders}</b></li>
+                <li>This month: <b>{analytics.monthOrders}</b></li>
+              </ul>
+            </div>
+            <div className="metric-card accent-border">
+              <span className="metric-icon" role="img" aria-label="revenue">💰</span>
+              <h4>Revenue</h4>
+              <ul>
+                <li>Today: ₹<b>{analytics.todayRevenue?.toFixed(2)}</b></li>
+                <li>This week: ₹<b>{analytics.weekRevenue?.toFixed(2)}</b></li>
+                <li>This month: ₹<b>{analytics.monthRevenue?.toFixed(2)}</b></li>
+              </ul>
+            </div>
+            <div className="metric-card accent-border">
+              <span className="metric-icon" role="img" aria-label="top items">🍽️</span>
+              <h4>Top Items</h4>
+              <ul>
+                {analytics.topItems.map((item, i) => (
+                  <li key={item._id || i}>
+                    {item.name} <span style={{ color: "#2b87ff", fontWeight: 500 }}>({item.qty || item.orderCount})</span>
+                  </li>
+                ))}
+                {(!analytics.topItems || analytics.topItems.length === 0) && <li>No data</li>}
+              </ul>
+            </div>
+            <div className="metric-card accent-border">
+              <span className="metric-icon" role="img" aria-label="tables">🪑</span>
+              <h4>Top Tables</h4>
+              <ul>
+                {analytics.tableUsage.map((tbl, i) => (
+                  <li key={tbl.tableId || i}>
+                    Table <b>{tbl.number || tbl.tableNumber}</b>: <span style={{ color: "#44c77b", fontWeight: 500 }}>{tbl.usage || tbl.usageCount} orders</span>
+                  </li>
+                ))}
+                {(!analytics.tableUsage || analytics.tableUsage.length === 0) && <li>No data</li>}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Charts */}
+        <div className="charts-group">
+          <div className="chart-box" style={{ minHeight: 310 }}>
+            <Bar
+              data={barOrdersData}
+              options={barChartOptions}
+            />
+          </div>
+          <div className="chart-box" style={{ minHeight: 310 }}>
+            <Pie
+              data={pieTopItemsData}
+              options={pieChartOptions}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Orders Table Overview */}
+      <section className="orders-section" aria-label="Orders Overview">
+        <h2 className="section-header">Recent Orders</h2>
+        {loading ? (
+          <p className="loading">Loading orders...</p>
+        ) : error ? (
+          <p className="error">{error}</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table className="orders-table">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Table</th>
+                  <th>Order Items</th>
+                  <th>Total (₹)</th>
+                  <th>Status</th>
+                  <th>Time</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {orders.map((order, orderIndex) => (
+                  <tr key={order._id || `order-${orderIndex}`}>
+                    <td data-label="Customer">
+                      {order.userId?.name || "Guest"}<br />
+                      <small style={{ color: "#517599" }}>{order.userId?.email || "-"}</small>
+                    </td>
+                    <td data-label="Table">
+                      {order.tableId?.number ?? "—"}
+                    </td>
+                    <td data-label="Order Items">
+                      {order.items.map((it, i) => (
+                        <div key={it._id || `${order._id}-item-${i}`}>
+                          {it.menuItemId?.name || "(Unknown Item)"} × {it.qty}
+                        </div>
+                      ))}
+                    </td>
+                    <td data-label="Total">
+                      ₹{order.totalPrice?.toFixed(2) || "0.00"}
+                    </td>
+                    <td
+                      data-label="Status"
+                      className={`status ${order.status}`}
+                    >
+                      {order.status}
+                    </td>
+                    <td data-label="Time">
+                      {new Date(order.createdAt).toLocaleString("en-IN", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        day: "2-digit",
+                        month: "short",
+                      })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
-      {/* Optionally show analytics, revenue, top items here for admin */}
     </div>
   );
 };
