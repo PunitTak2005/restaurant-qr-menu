@@ -14,7 +14,6 @@ import {
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar, Pie } from "react-chartjs-2";
 
-// Register plugin and chart elements
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -26,11 +25,8 @@ ChartJS.register(
   ChartDataLabels
 );
 
-// ----------- ENVIRONMENT-AWARE API PREFIX ------------
-// Use Vite's env variable, fallback to Render
 const API_PREFIX =
   import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
-// ------------------------------------------------------
 
 const pieColors = [
   "#4cc472", "#36A2EB", "#FF6384", "#FFCE56", "#a065ec",
@@ -59,6 +55,7 @@ const AdminDashboard = () => {
       try {
         const res = await axios.get(`${API_PREFIX}/orders`);
         setOrders(res.data?.orders || []);
+        setError("");
       } catch (err) {
         setError("Failed to fetch orders. Please verify backend connection.");
       } finally {
@@ -72,7 +69,7 @@ const AdminDashboard = () => {
     const fetchAnalytics = async () => {
       try {
         const res = await axios.get(`${API_PREFIX}/admin/analytics`);
-        setAnalytics(res.data);
+        setAnalytics(res.data || {});
         setAnalyticsError("");
       } catch (err) {
         setAnalyticsError(
@@ -87,10 +84,99 @@ const AdminDashboard = () => {
     fetchAnalytics();
   }, []);
 
-  // ... rest of your chart and UI code remains unchanged ...
+  // Chart Data: Top Items Pie
+  const pieData = {
+    labels: analytics.topItems?.map(i => i.name) || [],
+    datasets: [{
+      data: analytics.topItems?.map(i => i.qty) || [],
+      backgroundColor: pieColors,
+      borderWidth: 1,
+    }]
+  };
 
-  // (same JSX as before)
-  // ...
+  // Chart Data: Table Usage Bar
+  const barData = {
+    labels: analytics.tableUsage?.map(t => "Table " + t.number) || [],
+    datasets: [{
+      label: "Orders per Table",
+      data: analytics.tableUsage?.map(t => t.usage) || [],
+      backgroundColor: "#36A2EB"
+    }]
+  };
+
+  // Optionally add chart options/legends as desired
+
+  return (
+    <div className="admin-dashboard-container">
+      <header className="admin-header">
+        <h1>Admin Dashboard</h1>
+        <p>
+          {"Monitor orders, revenue & table usage."}
+        </p>
+      </header>
+
+      {(loading || analyticsLoading) && (
+        <div className="loading-indicator">
+          Loading data...
+        </div>
+      )}
+
+      {error && <div className="error-msg">{error}</div>}
+      {analyticsError && <div className="error-msg analytics">{analyticsError}</div>}
+
+      {!loading && !analyticsLoading && (
+        <section className="dashboard-grid">
+          <div className="stats-cards">
+            <div className="stats-card">
+              <span>Today Orders</span>
+              <b>{analytics.todayOrders}</b>
+            </div>
+            <div className="stats-card">
+              <span>Week Orders</span>
+              <b>{analytics.weekOrders}</b>
+            </div>
+            <div className="stats-card">
+              <span>Month Orders</span>
+              <b>{analytics.monthOrders}</b>
+            </div>
+            <div className="stats-card">
+              <span>Today Revenue</span>
+              <b>₹{analytics.todayRevenue}</b>
+            </div>
+            <div className="stats-card">
+              <span>Week Revenue</span>
+              <b>₹{analytics.weekRevenue}</b>
+            </div>
+            <div className="stats-card">
+              <span>Month Revenue</span>
+              <b>₹{analytics.monthRevenue}</b>
+            </div>
+          </div>
+
+          <div className="charts-section">
+            <div className="chart-card">
+              <h3>Top Items</h3>
+              {pieData.labels.length > 0 ? (
+                <Pie data={pieData} options={{ plugins: { legend: { display: true } }}} />
+              ) : (
+                <div className="chart-empty">No top item data</div>
+              )}
+            </div>
+            <div className="chart-card">
+              <h3>Table Usage</h3>
+              {barData.labels.length > 0 ? (
+                <Bar data={barData} options={{ plugins: { legend: { display: false } }}} />
+              ) : (
+                <div className="chart-empty">No table usage data</div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Optionally, add a recent orders table here for admins */}
+    </div>
+  );
 };
 
 export default AdminDashboard;
