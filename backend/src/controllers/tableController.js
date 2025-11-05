@@ -5,7 +5,7 @@ export const getTableBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
 
-    // Correctly find table by QR slug (field is qrSlug)
+    // Find table by QR slug
     const table = await Table.findOne({ qrSlug: slug });
 
     if (!table) {
@@ -16,17 +16,21 @@ export const getTableBySlug = async (req, res) => {
       });
     }
 
-    // Return table info and menu link (absolute, if needed)
+    // Return table info and menu link
     return res.status(200).json({
       success: true,
       data: {
         tableNumber: table.number,
         menuLink: `/menu/items?table=${table._id}`,
         qrSlug: table.qrSlug,
-        tableId: table._id
+        tableId: table._id,
+        status: table.status,
+        seats: table.seats,
+        active: table.active
       }
     });
   } catch (error) {
+    console.error("getTableBySlug error:", error);
     return res.status(500).json({
       success: false,
       error: error.message,
