@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./StaffDashboard.css";
 
+// ENVIRONMENT-AWARE API PREFIX
+const API_PREFIX =
+  import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
+
 const STATUS_OPTIONS = [
   "pending",
   "preparing",
@@ -20,7 +24,7 @@ const StaffDashboard = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/orders");
+        const res = await axios.get(`${API_PREFIX}/orders`);
         setOrders(res.data?.data || res.data?.orders || []);
       } catch (err) {
         console.error("❌ Error loading orders:", err.message);
@@ -43,11 +47,10 @@ const StaffDashboard = () => {
       const newStatus = statusUpdates[orderId];
       const token = localStorage.getItem("token");
       await axios.patch(
-        `http://localhost:5000/api/orders/${orderId}/status`,
+        `${API_PREFIX}/orders/${orderId}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Update status in UI
       setOrders((prev) =>
         prev.map((order) =>
           order._id === orderId ? { ...order, status: newStatus } : order
