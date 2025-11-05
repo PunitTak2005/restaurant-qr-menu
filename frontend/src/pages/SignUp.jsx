@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./AuthForm.css";
+import { apiFetch } from "../utils/apiFetch"; // <--- Import your utility
 
 const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const navigate = useNavigate();
 
   // ---------------- HANDLE SIGNUP (POST to Backend) ----------------
   const handleSignUp = async (e) => {
@@ -15,20 +17,16 @@ const SignUp = () => {
     const formData = { name, email, password, role };
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        // ✅ Use /register route that exists in your backend
+      const data = await apiFetch("/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
-      const data = await res.json();
 
       if (data.success) {
         alert("✅ Account created successfully!");
         console.log("User created:", data.user);
         // Optional: redirect to login page or dashboard
-        window.location.href = "/signin";
+        navigate("/signin");
       } else {
         alert("⚠️ " + (data.message || "Signup failed"));
       }
@@ -86,8 +84,8 @@ const SignUp = () => {
           >
             <option value="">Select your role</option>
             <option value="customer">Customer</option>
-             <option value="owner">Staff</option> 
-            <option value="admin">Admin</option> 
+            <option value="owner">Staff</option>
+            <option value="admin">Admin</option>
           </select>
         </div>
 
