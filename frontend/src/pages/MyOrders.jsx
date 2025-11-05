@@ -2,18 +2,26 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './MyOrders.css';
 
+// ENVIRONMENT-AWARE API PREFIX
+const API_PREFIX =
+  import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
+
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/orders/my', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    })
+    axios
+      .get(`${API_PREFIX}/orders/my`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
       .then(res => {
         // If your API response wraps orders in a .orders key, adjust here:
         setOrders(res.data.orders || res.data);
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        setOrders([]); // fallback to empty on error
+      });
   }, []);
 
   return (
