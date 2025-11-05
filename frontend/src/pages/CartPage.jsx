@@ -38,8 +38,10 @@ const CartPage = () => {
         console.log("Tables API response:", res.data);
         if (res.data.success && Array.isArray(res.data.tables)) {
           setTables(res.data.tables);
+          console.log("Tables fetched and setState:", res.data.tables); // Debug after setting state
         } else {
           setTables([]);
+          console.warn("No valid tables array in response.");
         }
       } catch (e) {
         setTables([]);
