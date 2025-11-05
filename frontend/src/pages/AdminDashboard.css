@@ -14,6 +14,7 @@
   text-align: center;
   margin-bottom: 36px;
 }
+
 .admin-header h1 {
   margin: 0;
   font-size: 2.3rem;
@@ -21,6 +22,7 @@
   letter-spacing: 1px;
   font-weight: 700;
 }
+
 .admin-header p {
   font-size: 1.05rem;
   color: #517599;
@@ -38,6 +40,7 @@
   gap: 22px;
   margin-bottom: 32px;
 }
+
 .metric-card {
   flex: 1 1 210px;
   background: #fff;
@@ -48,204 +51,276 @@
   overflow-wrap: anywhere;
   word-break: break-word;
 }
-.metric-card h4 {
-  font-size: 1.16rem;
-  margin: 0 0 8px 0;
-  color: #2976d6;
-  font-weight: 600;
+
+.metric-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.92rem;
+  color: #6a8aaa;
+  letter-spacing: 0.3px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.metric-card .value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #223347;
+  margin-bottom: 6px;
+}
+
+.metric-card .subtext {
+  font-size: 0.86rem;
+  color: #8da5b8;
+}
+
+.orders-section h2,
+.analytics-section h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  color: #2b87ff;
   letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.metric-card ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.metric-card li {
-  font-size: 1.02rem;
-  margin-bottom: 4px;
-  color: #47617b;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-.metric-card li:last-child {
-  margin-bottom: 0;
-}
-
-.charts-group {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 38px;
-}
-.chart-box {
-  flex: 1 1 330px;
-  min-width: 320px;
-  max-width: 99vw;
-  background: #fff;
-  border-radius: 13px;
-  box-shadow: 0 2px 12px rgba(44, 92, 120, 0.07);
-  padding: 20px 16px 4px 16px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-x: auto;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-.chart-box > * {
-  max-width: 100%;
-  box-sizing: border-box;
-}
-.chart-box canvas,
-.chart-box svg {
-  display: block;
-  max-width: 100% !important;
-  height: auto !important;
-}
-.chart-box text,
-.chart-box tspan {
-  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif !important;
-  font-size: 1.02rem;
   font-weight: 600;
-  word-break: break-all;
-}
-.chart-box .chart-legend,
-.chart-box .apexcharts-legend,
-.chart-box .recharts-legend-wrapper {
-  flex-wrap: wrap;
-  word-break: break-word;
-  white-space: normal;
-  justify-content: center;
 }
 
-.orders-section {
-  margin-top: 36px;
+.orders-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(44, 92, 120, 0.08);
+  background: #fff;
 }
 
 .orders-table {
   width: 100%;
-  margin-top: 14px;
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 13px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(44, 92, 120, 0.08);
-  font-size: 1.04rem;
-  table-layout: fixed;
+  min-width: 700px;
 }
+
 .orders-table th,
 .orders-table td {
-  padding: 13px 10px;
+  padding: 14px 16px;
   text-align: left;
-  vertical-align: top;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  white-space: normal;
-  max-width: 225px;
+  border-bottom: 1px solid #e4ecf3;
 }
+
 .orders-table th {
-  font-size: 1.01rem;
-  background: #e6f2fd;
-  color: #2562a9;
+  background: #f5f8fb;
   font-weight: 600;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-}
-.orders-table tr:nth-child(even) {
-  background: #f6fafd;
-}
-.orders-table td {
-  color: #364e63;
+  color: #517599;
+  font-size: 0.88rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 
-.status {
+.orders-table tr:hover {
+  background: #f9fbfc;
+}
+
+.status-badge {
+  padding: 5px 11px;
   border-radius: 8px;
-  padding: 5px 12px;
-  font-size: 1rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.completed {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-badge.cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.charts-group {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.chart-box {
+  flex: 1 1 450px;
+  background: #fff;
+  padding: 22px;
+  border-radius: 13px;
+  box-shadow: 0 3px 15px rgba(44, 92, 120, 0.08);
+  min-width: 300px;
+}
+
+.chart-box h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 1.25rem;
+  color: #2b87ff;
+  letter-spacing: 0.4px;
   font-weight: 600;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  text-transform: capitalize;
-  vertical-align: middle;
-  transition: background-color 0.3s ease;
-  white-space: nowrap;
-  width: 100%;
-  box-sizing: border-box;
-  position: relative;
-  top: 2px; /* nudge all statuses down by 2 pixels */
 }
 
-
-
-.status.pending {
-  background: #ff9c23;
-}
-.status.preparing {
-  background: #1e72bf;
-}
-.status.ready {
-  background: #4cc472;
-}
-.status.served {
-  background: #2b87ff;
-}
-.status.paid {
-  background: #10a18a;
-}
-.status.cancelled {
-  background: #d44a4a;
-}
-
-.loading,
-.error {
-  color: #2076b7;
-  font-size: 1.09rem;
-  text-align: center;
-  margin: 30px 0 10px 0;
-}
-.error {
-  color: #e02d2d;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .metrics-group,
-  .charts-group {
-    flex-direction: column;
-    gap: 14px;
-  }
-  .chart-box {
-    min-width: 0;
-    width: 100%;
-  }
-  .metric-card {
-    min-width: 0;
-    width: 100%;
-  }
-  .orders-table th,
-  .orders-table td {
-    max-width: 120px;
-  }
-}
-@media (max-width: 650px) {
+/* Responsive Media Queries */
+@media (max-width: 768px) {
   .admin-container {
-    padding: 14px 3vw;
+    max-width: 100%;
+    margin: 16px;
+    padding: 20px 16px;
+    border-radius: 12px;
   }
-  .orders-table th,
-  .orders-table td {
-    padding: 9px 5px;
-    max-width: 80px;
+
+  .admin-header {
+    margin-bottom: 24px;
   }
-  .charts-group,
+
+  .admin-header h1 {
+    font-size: 1.8rem;
+    letter-spacing: 0.5px;
+  }
+
+  .admin-header p {
+    font-size: 0.95rem;
+  }
+
+  .analytics-section {
+    margin-bottom: 30px;
+  }
+
   .metrics-group {
     flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+
+  .orders-section h2,
+  .analytics-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .charts-group {
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .chart-box {
+    flex: 1 1 100%;
+    min-width: 100%;
+    padding: 18px;
+  }
+
+  .chart-box h3 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-container {
+    max-width: 100%;
+    margin: 8px;
+    padding: 16px 12px;
+    border-radius: 8px;
+  }
+
+  .admin-header {
+    margin-bottom: 20px;
+  }
+
+  .admin-header h1 {
+    font-size: 1.5rem;
+    letter-spacing: 0.3px;
+  }
+
+  .admin-header p {
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+
+  .analytics-section {
+    margin-bottom: 24px;
+  }
+
+  .metrics-group {
     gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .metric-card {
+    padding: 14px 16px;
+    border-radius: 10px;
+  }
+
+  .metric-card h3 {
+    font-size: 0.85rem;
+  }
+
+  .metric-card .value {
+    font-size: 1.6rem;
+  }
+
+  .metric-card .subtext {
+    font-size: 0.8rem;
+  }
+
+  .orders-section h2,
+  .analytics-section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+  }
+
+  .orders-table-wrapper {
+    border-radius: 8px;
+  }
+
+  .orders-table {
+    min-width: 600px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .orders-table th {
+    font-size: 0.75rem;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .charts-group {
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .chart-box {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .chart-box h3 {
+    font-size: 1rem;
+    margin-bottom: 14px;
   }
 }
 
@@ -253,11 +328,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem; /* adjust size as needed */
-  width: 2.2em; /* fixed width to align emojis consistently */
-  height: 2.2em; /* fixed height for vertical alignment */
-  margin-right: 0.5em; /* spacing between emoji and text */
+  font-size: 1.8rem;
+  width: 2.2em;
+  height: 2.2em;
+  margin-right: 0.5em;
   vertical-align: middle;
 }
-
-
