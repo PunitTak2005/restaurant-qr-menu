@@ -23,13 +23,19 @@ ChartJS.register(
   Legend,
   ChartDataLabels
 );
-// Set API base URL via VITE env (recommended for Render) or fallback
+
+// IMPORTANT: Set API base URL to fetch data from MongoDB Atlas via deployed backend
+// In production (Render), set VITE_API_BASE_URL env variable to your backend URL
+// This ensures the frontend fetches analytics and orders from the Atlas-connected backend
+// Default fallback points to the deployed Render backend with MongoDB Atlas connection
 const API_PREFIX =
   import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
+
 const pieColors = [
   "#4cc472", "#36A2EB", "#FF6384", "#FFCE56", "#a065ec",
   "#10a18a", "#2b87ff", "#ff9c23", "#512da8", "#c51162"
 ];
+
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [analytics, setAnalytics] = useState({
@@ -46,8 +52,9 @@ const AdminDashboard = () => {
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [error, setError] = useState("");
   const [analyticsError, setAnalyticsError] = useState("");
+
   useEffect(() => {
-    // Fetch orders
+    // Fetch orders from Atlas-connected backend
     const fetchOrders = async () => {
       try {
         const res = await axios.get(`${API_PREFIX}/orders`);
@@ -63,8 +70,9 @@ const AdminDashboard = () => {
     };
     fetchOrders();
   }, []);
+
   useEffect(() => {
-    // Fetch analytics
+    // Fetch analytics from Atlas-connected backend
     const fetchAnalytics = async () => {
       try {
         const res = await axios.get(`${API_PREFIX}/admin/analytics`);
@@ -84,6 +92,7 @@ const AdminDashboard = () => {
     };
     fetchAnalytics();
   }, []);
+
   // Chart Data: Top Items Pie
   const pieData = {
     labels: analytics.topItems?.map(i => i.name) || [],
@@ -93,6 +102,7 @@ const AdminDashboard = () => {
       borderWidth: 1,
     }]
   };
+
   // Chart Data: Table Usage Bar
   const barData = {
     labels: analytics.tableUsage?.map(t => "Table " + t.number) || [],
@@ -102,6 +112,7 @@ const AdminDashboard = () => {
       backgroundColor: "#36A2EB"
     }]
   };
+
   // Chart options
   const pieOptions = {
     plugins: {
@@ -112,6 +123,7 @@ const AdminDashboard = () => {
       }
     }
   };
+
   const barOptions = {
     plugins: {
       legend: { display: false },
@@ -126,10 +138,11 @@ const AdminDashboard = () => {
       y: { beginAtZero: true }
     }
   };
+
   return (
     <div className="admin-dashboard-container">
       <header className="admin-header">
-        Admin Dashboard
+        <h1>Admin Dashboard</h1>
         <p>
           Monitor orders, revenue & table usage.
         </p>
@@ -193,4 +206,5 @@ const AdminDashboard = () => {
     </div>
   );
 };
+
 export default AdminDashboard;
