@@ -1,38 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/apiFetch"; // <- Import
 
 import "./OrderStatusPage.css";
 
 // --- Fetch order from backend API ---
 const fetchOrderById = async (id) => {
   try {
-    const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
+    // Uses environment variable or Render as fallback
+    const data = await apiFetch(`/orders/${id}`, {
+      method: "GET",
       headers: { "Accept": "application/json" },
     });
-    if (!res.ok) {
-      let message;
-      switch (res.status) {
-        case 400:
-          message = "Invalid Order ID format. Please verify your link.";
-          break;
-        case 404:
-          message = "Order not found. Please check your tracking link.";
-          break;
-        default:
-          message = "Unexpected server error. Please try again later.";
-      }
-      throw new Error(message);
+
+    if (!data || typeof data !== "object" || !data.order) {
+      throw new Error("Order not found or malformed response.");
     }
-    const contentType = res.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      await res.text();
-      throw new Error("Received unexpected response from server.");
-    }
-    const data = await res.json();
-    if (!data || typeof data !== "object") {
-      throw new Error("Malformed response from server.");
-    }
-    return data?.order || null;
+    return data.order;
   } catch (err) {
     if (err.name === "TypeError") {
       throw new Error("Unable to reach the server. Please check your connection.");
@@ -40,8 +24,6 @@ const fetchOrderById = async (id) => {
     throw err;
   }
 };
-
-
 
 // Human-readable order statuses
 const statusMessages = {
@@ -67,8 +49,6 @@ const OrderStatusPage = () => {
   const [order, setOrder] = useState(null);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-
 
   // --- INITIAL FETCH and POLLING ---
   useEffect(() => {
@@ -161,10 +141,10 @@ const OrderStatusPage = () => {
               <tbody>
                 {order.items && order.items.length > 0 ? (
                   order.items.map((item, idx) => (
-                    <tr key={item.menuItemId._id || idx}>
-                      <td>{item.menuItemId.name}</td>
+                    <tr key={item.menuItemId?._id || idx}>
+                      <td>{item.menuItemId?.name || "Unknown Item"}</td>
                       <td>{item.qty}</td>
-                      <td>₹{item.menuItemId.price * item.qty}</td>
+                      <td>₹{(item.menuItemId?.price || 0) * item.qty}</td>
                     </tr>
                   ))
                 ) : (
