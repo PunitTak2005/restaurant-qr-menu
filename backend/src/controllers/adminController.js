@@ -2,7 +2,6 @@
 import Order from "../models/Order.js";
 import Table from "../models/Table.js";
 
-// Helper: Start dates for query
 function getStartOf(period) {
   const now = new Date();
   if (period === "today") return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -16,14 +15,11 @@ function getStartOf(period) {
 
 export const getAnalytics = async (req, res) => {
   try {
-    // Orders
     const [todayOrders, weekOrders, monthOrders] = await Promise.all([
       Order.countDocuments({ createdAt: { $gte: getStartOf("today") } }),
       Order.countDocuments({ createdAt: { $gte: getStartOf("week") } }),
       Order.countDocuments({ createdAt: { $gte: getStartOf("month") } })
     ]);
-
-    // Revenue
     async function revenueAgg(from) {
       const agg = await Order.aggregate([
         { $match: { createdAt: { $gte: from } } },
@@ -36,8 +32,6 @@ export const getAnalytics = async (req, res) => {
       revenueAgg(getStartOf("week")),
       revenueAgg(getStartOf("month"))
     ]);
-
-    // Top Items (last 7 days)
     const topItemsAgg = await Order.aggregate([
       { $match: { createdAt: { $gte: new Date(Date.now() - 7*24*60*60*1000) } } },
       { $unwind: "$items" },
@@ -46,15 +40,21 @@ export const getAnalytics = async (req, res) => {
       { $limit: 5 },
       { $project: { name: "$_id", qty: 1, _id: 0 } }
     ]);
-
-    // Table usage stats (last 30 days)
     const tableAgg = await Order.aggregate([
       { $match: { createdAt: { $gte: new Date(Date.now() - 30*24*60*60*1000) } } },
       { $group: { _id: "$table", usage: { $sum: 1 } } },
       { $sort: { usage: -1 } },
       { $project: { number: "$_id", usage: 1, _id: 0 } }
     ]);
-
+    // Debug logs
+    console.log("todayOrders:", todayOrders);
+    console.log("weekOrders:", weekOrders);
+    console.log("monthOrders:", monthOrders);
+    console.log("todayRevenue:", todayRevenue);
+    console.log("weekRevenue:", weekRevenue);
+    console.log("monthRevenue:", monthRevenue);
+    console.log("topItemsAgg:", topItemsAgg);
+    console.log("tableAgg:", tableAgg);
     res.json({
       todayOrders,
       weekOrders,
