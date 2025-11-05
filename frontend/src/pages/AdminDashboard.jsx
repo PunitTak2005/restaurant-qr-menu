@@ -1,69 +1,30 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminDashboard.css";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-} from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { Bar, Pie } from "react-chartjs-2";
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-);
 
-// IMPORTANT: Set API base URL to fetch data from MongoDB Atlas via deployed backend
-// In production (Render), set VITE_API_BASE_URL env variable to your backend URL
-// This ensures the frontend fetches analytics and orders from the Atlas-connected backend
-// Default fallback points to the deployed Render backend with MongoDB Atlas connection
+// ENVIRONMENT-AWARE API PREFIX
 const API_PREFIX =
   import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
 
-const pieColors = [
-  "#4cc472", "#36A2EB", "#FF6384", "#FFCE56", "#a065ec",
-  "#10a18a", "#2b87ff", "#ff9c23", "#512da8", "#c51162"
+const STATUS_OPTIONS = [
+  "pending", "preparing", "ready", "served", "paid", "cancelled"
 ];
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
-  const [analytics, setAnalytics] = useState({
-    todayOrders: 0,
-    weekOrders: 0,
-    monthOrders: 0,
-    todayRevenue: 0,
-    weekRevenue: 0,
-    monthRevenue: 0,
-    topItems: [],
-    tableUsage: [],
-  });
   const [loading, setLoading] = useState(true);
-  const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [analyticsError, setAnalyticsError] = useState("");
+  const [statusUpdates, setStatusUpdates] = useState({});
 
   useEffect(() => {
-    // Fetch orders from Atlas-connected backend
     const fetchOrders = async () => {
       try {
+        // Fetch all orders for admin
         const res = await axios.get(`${API_PREFIX}/orders`);
-        console.log('Orders API Response:', res.data);
-        setOrders(res.data?.orders || []);
-        setError("");
+        setOrders(res.data?.data || res.data?.orders || []);
       } catch (err) {
-        console.log('Orders API Error:', err);
-        setError("Failed to fetch orders. Please verify backend connection & CORS settings.");
+        console.error("❌ Error loading orders:", err.message);
+        setError("Failed to fetch orders. Please verify backend connection.");
       } finally {
         setLoading(false);
       }
@@ -71,138 +32,130 @@ const AdminDashboard = () => {
     fetchOrders();
   }, []);
 
-  useEffect(() => {
-    // Fetch analytics from Atlas-connected backend
-    const fetchAnalytics = async () => {
-      try {
-        const res = await axios.get(`${API_PREFIX}/admin/analytics`);
-        console.log('Analytics API Response:', res.data);
-        setAnalytics(res.data || {});
-        setAnalyticsError("");
-      } catch (err) {
-        console.log('Analytics API Error:', err);
-        setAnalyticsError(
-          err?.response
-            ? `Analytics error: ${err.response.status} ${err.response.statusText} - check backend logs.`
-            : "Failed to fetch analytics. Backend or API may be down, or CORS misconfigured."
-        );
-      } finally {
-        setAnalyticsLoading(false);
-      }
-    };
-    fetchAnalytics();
-  }, []);
-
-  // Chart Data: Top Items Pie
-  const pieData = {
-    labels: analytics.topItems?.map(i => i.name) || [],
-    datasets: [{
-      data: analytics.topItems?.map(i => i.qty) || [],
-      backgroundColor: pieColors,
-      borderWidth: 1,
-    }]
+  // Handle status change in dropdown
+  const handleStatusChange = (orderId, newStatus) => {
+    setStatusUpdates({ ...statusUpdates, [orderId]: newStatus });
   };
 
-  // Chart Data: Table Usage Bar
-  const barData = {
-    labels: analytics.tableUsage?.map(t => "Table " + t.number) || [],
-    datasets: [{
-      label: "Orders per Table",
-      data: analytics.tableUsage?.map(t => t.usage) || [],
-      backgroundColor: "#36A2EB"
-    }]
-  };
-
-  // Chart options
-  const pieOptions = {
-    plugins: {
-      legend: { display: true },
-      datalabels: {
-        color: '#333',
-        formatter: (value, context) => value,
-      }
+  // Send status update to backend (as admin)
+  const updateOrderStatus = async (orderId) => {
+    try {
+      const newStatus = statusUpdates[orderId];
+      const token = localStorage.getItem("token"); // Admin token
+      await axios.patch(
+        `${API_PREFIX}/orders/${orderId}/status`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (err) {
+      alert("Failed to update order status!");
+      console.error(err);
     }
   };
 
-  const barOptions = {
-    plugins: {
-      legend: { display: false },
-      datalabels: {
-        anchor: 'end',
-        align: 'top',
-        color: '#1a237e',
-        font: { weight: 'bold' }
-      }
-    },
-    scales: {
-      y: { beginAtZero: true }
-    }
-  };
+  if (loading) return <p className="loading">Loading orders...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
-    <div className="admin-dashboard-container">
+    <div className="admin-container">
       <header className="admin-header">
         <h1>Admin Dashboard</h1>
         <p>
-          Monitor orders, revenue & table usage.
+          Welcome Admin! View, manage and update all restaurant orders.
         </p>
       </header>
-      {(loading || analyticsLoading) && (
-        <div className="loading-indicator">
-          Loading data...
-        </div>
-      )}
-      {error && <div className="error-msg">{error}</div>}
-      {analyticsError && <div className="error-msg analytics">{analyticsError}</div>}
-      {!loading && !analyticsLoading && (
-        <section className="dashboard-grid">
-          <div className="stats-cards">
-            <div className="stats-card">
-              <span>Today Orders</span>
-              <b>{analytics.todayOrders}</b>
-            </div>
-            <div className="stats-card">
-              <span>Week Orders</span>
-              <b>{analytics.weekOrders}</b>
-            </div>
-            <div className="stats-card">
-              <span>Month Orders</span>
-              <b>{analytics.monthOrders}</b>
-            </div>
-            <div className="stats-card">
-              <span>Today Revenue</span>
-              <b>₹{analytics.todayRevenue}</b>
-            </div>
-            <div className="stats-card">
-              <span>Week Revenue</span>
-              <b>₹{analytics.weekRevenue}</b>
-            </div>
-            <div className="stats-card">
-              <span>Month Revenue</span>
-              <b>₹{analytics.monthRevenue}</b>
-            </div>
-          </div>
-          <div className="charts-section">
-            <div className="chart-card">
-              <h3>Top Items</h3>
-              {pieData.labels.length > 0 ? (
-                <Pie data={pieData} options={pieOptions} />
-              ) : (
-                <div className="chart-empty">No top item data</div>
-              )}
-            </div>
-            <div className="chart-card">
-              <h3>Table Usage</h3>
-              {barData.labels.length > 0 ? (
-                <Bar data={barData} options={barOptions} />
-              ) : (
-                <div className="chart-empty">No table usage data</div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-      {/* Optional: add a recent orders table below for admin */}
+      <section className="orders-section">
+        <h2>All Orders Overview</h2>
+
+        {orders.length === 0 ? (
+          <p>No orders found.</p>
+        ) : (
+          <table className="orders-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Table</th>
+                <th>Order Items</th>
+                <th>Total (₹)</th>
+                <th>Status</th>
+                <th>Time</th>
+                <th>Update Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order._id}>
+                  <td data-label="Customer">
+                    {order.userId?.name || "Guest"}
+                    <br />
+                    <small>{order.userId?.email || "—"}</small>
+                  </td>
+                  <td data-label="Table">
+                    {order.tableId?.number ?? "—"}
+                  </td>
+                  <td data-label="Items">
+                    {order.items.map((it) => (
+                      <div key={it._id}>
+                        {it.menuItemId?.name || "(Unknown Item)"} × {it.qty}
+                      </div>
+                    ))}
+                  </td>
+                  <td data-label="Total">₹{order.totalPrice}</td>
+                  <td
+                    data-label="Status"
+                    className={`status ${order.status}`}
+                  >
+                    {order.status}
+                  </td>
+                  <td data-label="Time">
+                    {new Date(order.createdAt).toLocaleString("en-IN", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </td>
+                  <td data-label="Update Status">
+                    <select
+                      value={statusUpdates[order._id] || order.status}
+                      onChange={(e) =>
+                        handleStatusChange(order._id, e.target.value)
+                      }
+                    >
+                      {STATUS_OPTIONS.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => updateOrderStatus(order._id)}
+                      style={{
+                        marginLeft: "8px",
+                        padding: "5px 12px",
+                        background: "#c0392b",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "0.5em",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Update
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+      {/* Optionally show analytics, revenue, top items here for admin */}
     </div>
   );
 };
