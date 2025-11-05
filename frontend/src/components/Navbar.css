@@ -6,15 +6,14 @@
   background-color: #1f2937;
   padding: 0.75rem 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: fixed;       /* <--- Add this! */
-  top: 0; left: 0; right: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   z-index: 2000;
-  min-height: 62px;      /* <--- matches your code, adjust if you change padding/font */
+  min-height: 62px;
 }
-
-/* ...the rest of your styles ... */
-
 
 .navbar ul {
   display: flex;
@@ -34,71 +33,54 @@
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-weight: 500;
-  transition: all 0.3s ease;
 }
 
 .navbar a:hover {
   background-color: #374151;
-  color: #ffffff;
+  transition: background-color 0.3s ease;
 }
 
-/* ✅ Admin Dashboard Link */
-.admin-dashboard-link {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
-  color: white !important;
-  font-weight: 600;
-  position: relative;
-  overflow: hidden;
+/* Tablet Styles - 768px and below */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+    min-height: auto;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .navbar li {
+    width: 100%;
+  }
+
+  .navbar a {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
 }
 
-.admin-dashboard-link:hover {
-  background: linear-gradient(135deg, #b91c1c, #dc2626);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-}
+/* Mobile Styles - 480px and below */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.75rem 0.5rem;
+  }
 
-.admin-dashboard-link::before {
-  content: "👨‍💼";
-  margin-right: 0.5rem;
-}
+  .navbar ul {
+    gap: 0.25rem;
+  }
 
-/* ✅ Owner Dashboard Link */
-.owner-dashboard-link {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  color: white !important;
-  font-weight: 600;
-  position: relative;
-  overflow: hidden;
+  .navbar a {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+  }
 }
-
-.owner-dashboard-link:hover {
-  background: linear-gradient(135deg, #6d28d9, #9333ea);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-}
-
-.owner-dashboard-link::before {
-  content: "👑";
-  margin-right: 0.5rem;
-}
-
-/* Badge effect */
-.dashboard-link {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-.dashboard-link::after {
-  content: "Dashboard";
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #f59e0b;
-  color: white;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: 600;
-}
-
