@@ -5,11 +5,9 @@ import { useCart } from "../context/useCart";
 import { useAuth } from "../context/AuthContext";
 import "./CartPage.css";
 
-// ----------- ENVIRONMENT-AWARE API PREFIX -----------
-// For Vite, use VITE_API_BASE_URL; fallback to Render
+// Environment-aware API PREFIX
 const API_PREFIX =
   import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
-// -----------------------------------------------------
 
 const CartPage = () => {
   const {
@@ -29,18 +27,23 @@ const CartPage = () => {
   const [selectedTableId, setSelectedTableId] = useState("");
   const [selectedTable, setSelectedTable] = useState(null);
 
-  // Load tables from API
+  // Load tables from API (with optional auth)
   useEffect(() => {
     async function fetchTables() {
       try {
-        const res = await axios.get(`${API_PREFIX}/tables`);
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${API_PREFIX}/tables`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        console.log("Tables API response:", res.data);
         if (res.data.success && Array.isArray(res.data.tables)) {
           setTables(res.data.tables);
         } else {
-          setTables([]); // fallback to empty list
+          setTables([]);
         }
       } catch (e) {
-        setTables([]); // fallback to empty list on error
+        setTables([]);
+        console.error("Error fetching tables:", e);
       }
     }
     fetchTables();
@@ -178,6 +181,7 @@ const CartPage = () => {
               value={selectedTableId}
               onChange={(e) => handleTableSelect(e.target.value)}
               required
+              disabled={tables.length === 0}
             >
               <option value="">-- Choose Table --</option>
               {tables.map((table) => (
@@ -186,6 +190,11 @@ const CartPage = () => {
                 </option>
               ))}
             </select>
+            {tables.length === 0 && (
+              <div style={{ color: "#b94a48", paddingTop: "6px" }}>
+                No tables found. Please check with staff or try again later.
+              </div>
+            )}
           </div>
           <div className="cart-actions">
             <button className="browse-btn" onClick={goToMenu}>
