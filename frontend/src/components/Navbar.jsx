@@ -8,9 +8,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, setUser, logout, isAuthenticated } = useAuth();
 
-  // Hamburger menu state
-  const [menuOpen, setMenuOpen] = useState(false);
-
   // Restore user from localStorage on hard refresh
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -37,60 +34,148 @@ const Navbar = () => {
     window.scrollTo(0, 0);
   };
 
-  // Toggle the mobile menu
-  const toggleMenu = () => setMenuOpen((prev) => !prev);
-
   return (
-    <nav className="navbar">
-      {/* LEFT — Logo & Hamburger */}
-      <div className="navbar-left">
+    <nav
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "12px 32px",
+        background: "#111",
+        color: "#fff",
+        width: "100%",
+        boxShadow: "0 3px 12px rgba(44,62,80,0.07)",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 2000,
+        minHeight: "62px",
+      }}
+      className="navbar"
+    >
+      {/* LEFT — Logo & Links */}
+      <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
         {logo && (
           <img
             src={logo}
             alt="Logo"
-            style={{ width: 45, marginRight: 12 }}
+            style={{ width: "50px", marginRight: "16px" }}
           />
         )}
-        <button
-          className="hamburger"
-          onClick={toggleMenu}
-          aria-label="Menu"
+
+        <Link
+          to="/"
+          style={{
+            marginRight: "15px",
+            color: "#f8f9fa",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1.07rem",
+            padding: "6px 10px",
+            borderRadius: "6px",
+            transition: "background 0.18s, color 0.18s",
+          }}
         >
-          <span />
-          <span />
-          <span />
-        </button>
+          Home
+        </Link>
+        <Link
+          to="/m/digital-dine"
+          style={{
+            marginRight: "15px",
+            color: "#f8f9fa",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1.07rem",
+            padding: "6px 10px",
+            borderRadius: "6px",
+            transition: "background 0.18s, color 0.18s",
+          }}
+        >
+          Menu
+        </Link>
+        <Link
+          to="/cart"
+          style={{
+            marginRight: "15px",
+            color: "#f8f9fa",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1.07rem",
+            padding: "6px 10px",
+            borderRadius: "6px",
+            transition: "background 0.18s, color 0.18s",
+          }}
+        >
+          Cart
+        </Link>
+
+   
+       
+
+        {user?.role === "admin" && <Link to="/admin/dashboard">Admin Dashboard</Link>}
+        {user?.role === "owner" && <Link to="/owner/dashboard">Staff Dashboard</Link>}
+        {user && (<Link to="/my-orders">My Orders</Link>)}
+
       </div>
 
-      {/* LINKS — Responsive */}
-      <div className={`navbar-links ${menuOpen ? "open" : ""}`}>
-        <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
-        <Link to="/m/digital-dine" onClick={() => setMenuOpen(false)}>Menu</Link>
-        <Link to="/cart" onClick={() => setMenuOpen(false)}>Cart</Link>
-        {user?.role === "admin" && (
-          <Link to="/admin/dashboard" onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+      {/* RIGHT — Auth Controls */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        {isAuthenticated && user ? (
+          <>
+            <span style={{ fontSize: "1rem", fontWeight: 500 }}>
+              Welcome, {user?.name || user?.email || "User"}
+            </span>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: "#e67e22",
+                color: "#fff",
+                border: "none",
+                borderRadius: "24px",
+                padding: "7px 16px",
+                fontWeight: 600,
+                cursor: "pointer",
+                fontSize: "1.05rem",
+                transition: "background 0.22s",
+              }}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/signin"
+              style={{
+                color: "#f8f9fa",
+                textDecoration: "none",
+                fontWeight: 500,
+                fontSize: "1.07rem",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                transition: "background 0.18s, color 0.18s",
+              }}
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              style={{
+                background: "#e67e22",
+                color: "#fff",
+                borderRadius: "24px",
+                padding: "7px 18px",
+                marginLeft: "3px",
+                fontWeight: 600,
+                fontSize: "1.07rem",
+                textDecoration: "none",
+                transition: "background 0.22s",
+              }}
+            >
+              Sign Up
+            </Link>
+          </>
         )}
-        {user?.role === "owner" && (
-          <Link to="/owner/dashboard" onClick={() => setMenuOpen(false)}>Staff Dashboard</Link>
-        )}
-        {user && (
-          <Link to="/my-orders" onClick={() => setMenuOpen(false)}>My Orders</Link>
-        )}
-        <div className="navbar-auth">
-          {isAuthenticated && user ? (
-            <>
-              <span>
-                Welcome, {user?.name || user?.email || "User"}
-              </span>
-              <button onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <>
-              <Link to="/signin" onClick={() => setMenuOpen(false)}>Login</Link>
-              <Link to="/signup" onClick={() => setMenuOpen(false)} className="signup-link">Sign Up</Link>
-            </>
-          )}
-        </div>
       </div>
     </nav>
   );
