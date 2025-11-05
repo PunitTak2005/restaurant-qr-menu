@@ -13,7 +13,6 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar, Pie } from "react-chartjs-2";
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,16 +23,13 @@ ChartJS.register(
   Legend,
   ChartDataLabels
 );
-
 // Set API base URL via VITE env (recommended for Render) or fallback
 const API_PREFIX =
   import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
-
 const pieColors = [
   "#4cc472", "#36A2EB", "#FF6384", "#FFCE56", "#a065ec",
   "#10a18a", "#2b87ff", "#ff9c23", "#512da8", "#c51162"
 ];
-
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [analytics, setAnalytics] = useState({
@@ -50,15 +46,16 @@ const AdminDashboard = () => {
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [error, setError] = useState("");
   const [analyticsError, setAnalyticsError] = useState("");
-
   useEffect(() => {
     // Fetch orders
     const fetchOrders = async () => {
       try {
         const res = await axios.get(`${API_PREFIX}/orders`);
+        console.log('Orders API Response:', res.data);
         setOrders(res.data?.orders || []);
         setError("");
       } catch (err) {
+        console.log('Orders API Error:', err);
         setError("Failed to fetch orders. Please verify backend connection & CORS settings.");
       } finally {
         setLoading(false);
@@ -66,15 +63,16 @@ const AdminDashboard = () => {
     };
     fetchOrders();
   }, []);
-
   useEffect(() => {
     // Fetch analytics
     const fetchAnalytics = async () => {
       try {
         const res = await axios.get(`${API_PREFIX}/admin/analytics`);
+        console.log('Analytics API Response:', res.data);
         setAnalytics(res.data || {});
         setAnalyticsError("");
       } catch (err) {
+        console.log('Analytics API Error:', err);
         setAnalyticsError(
           err?.response
             ? `Analytics error: ${err.response.status} ${err.response.statusText} - check backend logs.`
@@ -86,7 +84,6 @@ const AdminDashboard = () => {
     };
     fetchAnalytics();
   }, []);
-
   // Chart Data: Top Items Pie
   const pieData = {
     labels: analytics.topItems?.map(i => i.name) || [],
@@ -96,7 +93,6 @@ const AdminDashboard = () => {
       borderWidth: 1,
     }]
   };
-
   // Chart Data: Table Usage Bar
   const barData = {
     labels: analytics.tableUsage?.map(t => "Table " + t.number) || [],
@@ -106,7 +102,6 @@ const AdminDashboard = () => {
       backgroundColor: "#36A2EB"
     }]
   };
-
   // Chart options
   const pieOptions = {
     plugins: {
@@ -117,7 +112,6 @@ const AdminDashboard = () => {
       }
     }
   };
-
   const barOptions = {
     plugins: {
       legend: { display: false },
@@ -132,25 +126,21 @@ const AdminDashboard = () => {
       y: { beginAtZero: true }
     }
   };
-
   return (
     <div className="admin-dashboard-container">
       <header className="admin-header">
-        <h1>Admin Dashboard</h1>
+        Admin Dashboard
         <p>
           Monitor orders, revenue & table usage.
         </p>
       </header>
-
       {(loading || analyticsLoading) && (
         <div className="loading-indicator">
           Loading data...
         </div>
       )}
-
       {error && <div className="error-msg">{error}</div>}
       {analyticsError && <div className="error-msg analytics">{analyticsError}</div>}
-
       {!loading && !analyticsLoading && (
         <section className="dashboard-grid">
           <div className="stats-cards">
@@ -179,7 +169,6 @@ const AdminDashboard = () => {
               <b>₹{analytics.monthRevenue}</b>
             </div>
           </div>
-
           <div className="charts-section">
             <div className="chart-card">
               <h3>Top Items</h3>
@@ -200,10 +189,8 @@ const AdminDashboard = () => {
           </div>
         </section>
       )}
-
       {/* Optional: add a recent orders table below for admin */}
     </div>
   );
 };
-
 export default AdminDashboard;
