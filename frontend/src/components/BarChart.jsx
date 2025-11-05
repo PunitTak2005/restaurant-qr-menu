@@ -1,105 +1,45 @@
-import React, { useEffect, useState } from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
+import React from "react";
 import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-);
-
-const API_PREFIX = "http://localhost:5000/api";
-
-function BarChart() {
-  const [analytics, setAnalytics] = useState({
-    todayOrders: 0,
-    weekOrders: 0,
-    monthOrders: 0,
-    todayRevenue: 0,
-    weekRevenue: 0,
-    monthRevenue: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch(`${API_PREFIX}/admin/analytics`);
-        const data = await res.json();
-        setAnalytics(data);
-      } catch (err) {
-        // Optional: handle error
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  const data = {
-    labels: ["Today", "This Week", "This Month"],
+const BarChart = ({ data, title = "Bar Chart", color = "#36A2EB" }) => {
+  // Example 'data' prop shape: [{ label: 'Jan', value: 12 }, ...]
+  const chartData = {
+    labels: data?.map(d => d.label) || [],
     datasets: [
       {
-        label: "Total Orders",
-        data: [analytics.todayOrders, analytics.weekOrders, analytics.monthOrders],
-        backgroundColor: "#2b87ff",
-        datalabels: {
-          display: false, // Hide blue labels completely
-        }
-      },
-      {
-        label: "Total Revenue",
-        data: [analytics.todayRevenue, analytics.weekRevenue, analytics.monthRevenue],
-        backgroundColor: "#44c77b",
-        datalabels: {
-          display: true,
-          color: "#111",
-          anchor: 'end',    // attach to bottom of bar
-          align: 'start',   // draw label below the bar
-          font: { weight: "bold", size: 18 },
-          offset: 10,
-        }
+        label: title,
+        data: data?.map(d => d.value) || [],
+        backgroundColor: color,
       }
-    ],
+    ]
   };
-
-  const options = {
-    responsive: true,
+  const chartOptions = {
     plugins: {
-      legend: { display: false }, // <--- Hides legend line above chart
-      title: { display: true, text: "Order Volume & Revenue per Period" },
+      legend: { display: false },
       datalabels: {
-        clamp: true,
-        formatter: function (value) {
-          return value;
-        }
+        anchor: 'end',
+        align: 'top',
+        color: '#1a237e',
+        font: { weight: 'bold' },
       }
     },
-    categoryPercentage: 0.6,
-    barPercentage: 0.6,
-    layout: { padding: { top: 32, bottom: 32 } }
+    scales: {
+      y: { beginAtZero: true },
+    }
   };
-
-  if (loading) return <p>Loading chart...</p>;
-
   return (
-    <div className="chart-box">
-      <Bar data={data} options={options} plugins={[ChartDataLabels]} />
+    <div style={{width: '100%', maxWidth: 450}}>
+      <h4>{title}</h4>
+      {chartData.labels.length > 0 ? (
+        <Bar data={chartData} options={chartOptions} />
+      ) : (
+        <div className="chart-empty">No bar chart data</div>
+      )}
     </div>
   );
-}
+};
 
 export default BarChart;
