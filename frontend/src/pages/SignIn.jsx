@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
-import "./AuthForm.css";
 import { useAuth } from "../context/AuthContext";
 import { CustomerContext } from "../context/CustomerContext";
 import { OwnerContext } from "../context/OwnerContext";
-import signInImage from "../assets/image.png"; // <-- adjust the path/filename as needed
+import signInImage from "../assets/image.png"; // Adjust path as needed
+import "./AuthForm.css";
+import { apiFetch } from "../utils/apiFetch"; // <--- ADD THIS IMPORT
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -13,14 +13,10 @@ const SignIn = () => {
   const { loginCustomer } = useContext(CustomerContext);
   const { loginOwner } = useContext(OwnerContext);
 
-  // Local state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ------------------------------------------------------------
-  // Handle Login → POST request with Axios
-  // ------------------------------------------------------------
   const handleSignIn = async (e) => {
     e.preventDefault();
     logout?.();
@@ -29,12 +25,14 @@ const SignIn = () => {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        email: email.trim().toLowerCase(),
-        password: password.trim(),
+      const data = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password: password.trim(),
+        }),
       });
 
-      const data = res.data;
       if (!data || !data.success) {
         alert(data.error || "Invalid credentials. Please try again.");
         return;
@@ -46,14 +44,10 @@ const SignIn = () => {
         return;
       }
 
-      // Persist user in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-
-      // ---- Update Context (Triggers Navbar + Global UI Update)
       login(user, token);
 
-      // ---- Role Redirection
       switch (user.role) {
         case "customer":
           loginCustomer?.(user, token);
@@ -76,20 +70,15 @@ const SignIn = () => {
     } catch (err) {
       console.error("❌ Login Error:", err);
       alert(
-        err.response?.data?.error ||
-          "Network or server error — please check backend connectivity."
+        err.message || "Network or server error — please check backend connectivity."
       );
     } finally {
       setLoading(false);
     }
   };
 
-  // ------------------------------------------------------------
-  // UI
-  // ------------------------------------------------------------
   return (
     <div className="auth-container">
-      {/* Visual sign in warning */}
       <div
         className="auth-visual-warning"
         style={{
