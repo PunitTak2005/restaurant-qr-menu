@@ -1,9 +1,8 @@
 // controllers/adminController.js
-
 import Order from "../models/Order.js";
 import Table from "../models/Table.js";
 
-// Helper for time ranges
+// Helper: Start dates for query
 function getStartOf(period) {
   const now = new Date();
   if (period === "today") return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -17,17 +16,18 @@ function getStartOf(period) {
 
 export const getAnalytics = async (req, res) => {
   try {
-    // Orders count for today/week/month
+    // Orders
     const [todayOrders, weekOrders, monthOrders] = await Promise.all([
       Order.countDocuments({ createdAt: { $gte: getStartOf("today") } }),
       Order.countDocuments({ createdAt: { $gte: getStartOf("week") } }),
-      Order.countDocuments({ createdAt: { $gte: getStartOf("month") } }),
+      Order.countDocuments({ createdAt: { $gte: getStartOf("month") } })
     ]);
-    // Revenue for today/week/month
+
+    // Revenue
     async function revenueAgg(from) {
       const agg = await Order.aggregate([
         { $match: { createdAt: { $gte: from } } },
-        { $group: { _id: null, sum: { $sum: "$totalPrice" } } }
+        { $group: { _id: null, sum: { $sum: "$totalPrice" }} }
       ]);
       return agg[0]?.sum || 0;
     }
@@ -36,37 +36,24 @@ export const getAnalytics = async (req, res) => {
       revenueAgg(getStartOf("week")),
       revenueAgg(getStartOf("month"))
     ]);
-    // Top ordered items for month
-    const topItems = await Order.aggregate([
-      { $match: { createdAt: { $gte: getStartOf("month") } } },
+
+    // Top Items (last 7 days)
+    const topItemsAgg = await Order.aggregate([
+      { $match: { createdAt: { $gte: new Date(Date.now() - 7*24*60*60*1000) } } },
       { $unwind: "$items" },
-      { $group: { _id: "$items.menuItemId", orderCount: { $sum: "$items.qty" } } },
-      { $sort: { orderCount: -1 } },
+      { $group: { _id: "$items.name", qty: { $sum: "$items.qty" }} },
+      { $sort: { qty: -1 } },
       { $limit: 5 },
-      { $lookup: {
-          from: "menuitems",
-          localField: "_id",
-          foreignField: "_id",
-          as: "menuItem"
-        }
-      },
-      { $addFields: { name: { $arrayElemAt: ["$menuItem.name", 0] } } },
-      { $project: { menuItem: 0 } }
+      { $project: { name: "$_id", qty: 1, _id: 0 } }
     ]);
-    // Top tables (most used this month)
-    const tableUsageAgg = await Order.aggregate([
-      { $match: { createdAt: { $gte: getStartOf("month") } } },
-      { $group: { _id: "$tableId", usageCount: { $sum: 1 } } },
-      { $sort: { usageCount: -1 } },
-      { $limit: 5 }
+
+    // Table usage stats (last 30 days)
+    const tableAgg = await Order.aggregate([
+      { $match: { createdAt: { $gte: new Date(Date.now() - 30*24*60*60*1000) } } },
+      { $group: { _id: "$table", usage: { $sum: 1 } } },
+      { $sort: { usage: -1 } },
+      { $project: { number: "$_id", usage: 1, _id: 0 } }
     ]);
-    const tableIds = tableUsageAgg.map(t => t._id);
-    const tables = await Table.find({ _id: { $in: tableIds } }).select("number");
-    const tableUsage = tableUsageAgg.map(tbl => ({
-      tableId: tbl._id,
-      tableNumber: tables.find(t => t._id.equals(tbl._id))?.number ?? "Unknown",
-      usageCount: tbl.usageCount
-    }));
 
     res.json({
       todayOrders,
@@ -75,10 +62,10 @@ export const getAnalytics = async (req, res) => {
       todayRevenue,
       weekRevenue,
       monthRevenue,
-      topItems,
-      tableUsage
+      topItems: topItemsAgg,
+      tableUsage: tableAgg
     });
   } catch (err) {
-    res.status(500).json({ message: "Analytics error.", detail: err.message });
+    res.status(500).json({ error: err.message || "Analytics failed" });
   }
 };
