@@ -1,7 +1,6 @@
 /* ---------------------------------------------------
    STAFF DASHBOARD — PROFESSIONAL MODERN DESIGN
 --------------------------------------------------- */
-
 /* ROOT VARIABLES FOR CONSISTENT THEMING */
 :root {
   --primary-color: #6366f1;
@@ -24,7 +23,6 @@
   --radius-md: 8px;
   --radius-lg: 12px;
 }
-
 /* CONTAINER */
 .staff-container {
   padding: 2rem;
@@ -34,7 +32,6 @@
   min-height: 100vh;
   line-height: 1.6;
 }
-
 /* HEADER */
 .staff-header {
   text-align: center;
@@ -42,365 +39,260 @@
   padding-bottom: 1.5rem;
   border-bottom: 2px solid var(--gray-200);
 }
-
 .staff-header h1 {
   font-size: 2.25rem;
   font-weight: 700;
   color: var(--primary-color);
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem 0;
   letter-spacing: -0.025em;
 }
-
 .staff-header p {
   color: var(--gray-500);
-  font-size: 1.1rem;
-  font-weight: 400;
+  font-size: 1rem;
+  margin: 0;
 }
-
 /* ORDERS SECTION */
 .orders-section {
   background: #ffffff;
+  padding: 2rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 1px solid var(--gray-200);
-  transition: box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .orders-section:hover {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.15), 0 6px 10px -3px rgba(0, 0, 0, 0.08);
 }
-
 .orders-section h2 {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--gray-900);
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--primary-color);
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-
-/* TABLE STYLES */
+.orders-section h2::before {
+  content: "📋";
+  font-size: 1.75rem;
+}
+/* ORDERS TABLE */
 .orders-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  font-size: 0.95rem;
-  overflow: hidden;
-  border-radius: var(--radius-md);
-}
-
-.orders-table thead {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  color: #ffffff;
-}
-
-.orders-table thead th {
-  padding: 1rem 0.875rem;
-  text-align: left;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--primary-dark);
-}
-
-.orders-table thead th:first-child {
-  border-top-left-radius: var(--radius-md);
-}
-
-.orders-table thead th:last-child {
-  border-top-right-radius: var(--radius-md);
-}
-
-.orders-table tbody tr {
-  transition: all 0.2s ease;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
   background: #ffffff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
-
-/* ZEBRA STRIPING */
-.orders-table tbody tr:nth-child(even) {
-  background: var(--gray-50);
+.orders-table thead {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
-
-.orders-table tbody tr:hover {
-  background: #eef2ff;
-  transform: scale(1.01);
-  box-shadow: var(--shadow-md);
+.orders-table thead th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  white-space: nowrap;
 }
-
-.orders-table tbody td {
-  padding: 1rem 0.875rem;
+.orders-table tbody tr {
   border-bottom: 1px solid var(--gray-200);
-  color: var(--gray-700);
+  transition: background 0.15s ease, transform 0.15s ease;
 }
-
-.orders-table tbody tr:last-child td {
+.orders-table tbody tr:hover {
+  background: var(--gray-50);
+  transform: scale(1.01);
+  box-shadow: var(--shadow-sm);
+}
+.orders-table tbody tr:last-child {
   border-bottom: none;
 }
-
-/* STATUS BADGES */
+.orders-table tbody td {
+  padding: 1rem 1.25rem;
+  color: var(--gray-700);
+  vertical-align: middle;
+}
+.orders-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+/* STATUS BADGE */
 .status-badge {
   display: inline-block;
   padding: 0.375rem 0.875rem;
-  border-radius: 9999px;
-  font-size: 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
   font-weight: 600;
   text-transform: capitalize;
   letter-spacing: 0.025em;
+  white-space: nowrap;
 }
-
-.status-pending {
+.status-badge.pending {
   background: #fef3c7;
   color: #92400e;
 }
-
-.status-preparing {
+.status-badge.preparing {
   background: #dbeafe;
   color: #1e40af;
 }
-
-.status-ready {
+.status-badge.completed {
   background: #d1fae5;
   color: #065f46;
 }
-
-.status-completed {
+.status-badge.delivered {
   background: #e0e7ff;
   color: #3730a3;
 }
-
 /* BUTTONS */
 .btn {
   padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   border: none;
   border-radius: var(--radius-md);
-  font-size: 0.9rem;
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.025em;
-  min-height: 44px; /* Touch-friendly */
+  box-shadow: var(--shadow-sm);
 }
-
 .btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
-
 .btn:active {
   transform: translateY(0);
 }
-
 .btn-primary {
   background: var(--primary-color);
   color: #ffffff;
 }
-
 .btn-primary:hover {
   background: var(--primary-dark);
 }
-
 .btn-success {
   background: var(--success-color);
   color: #ffffff;
 }
-
 .btn-success:hover {
   background: #059669;
 }
-
 .btn-danger {
   background: var(--danger-color);
   color: #ffffff;
 }
-
 .btn-danger:hover {
   background: #dc2626;
 }
-
-/* INPUT FIELDS */
-input[type="text"],
-input[type="email"],
-input[type="number"],
-select,
-textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  background: #ffffff;
-  color: var(--gray-900);
-  min-height: 44px; /* Touch-friendly */
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-/* LOADING STATE */
-.loading {
+/* NO ORDERS STATE */
+.no-orders {
   text-align: center;
-  padding: 3rem;
+  padding: 3rem 1.5rem;
   color: var(--gray-500);
-  font-size: 1.1rem;
+  font-size: 1.125rem;
 }
-
-.loading::after {
-  content: "...";
-  animation: dots 1.5s steps(3, end) infinite;
+.no-orders::before {
+  content: "🍽️";
+  display: block;
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
 }
-
-@keyframes dots {
-  0%, 20% { content: "."; }
-  40% { content: ".."; }
-  60%, 100% { content: "..."; }
-}
-
-/* EMPTY STATE */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: var(--gray-500);
-}
-
-.empty-state h3 {
-  font-size: 1.5rem;
-  color: var(--gray-700);
-  margin-bottom: 0.5rem;
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-
-/* TABLETS (768px - 1024px) */
-@media (max-width: 1024px) {
-  .staff-container {
-    padding: 1.5rem;
-  }
-
-  .staff-header h1 {
-    font-size: 2rem;
-  }
-
-  .orders-section {
-    padding: 1.25rem;
-  }
-
-  .orders-table {
-    font-size: 0.9rem;
-  }
-}
-
-/* MOBILE LANDSCAPE & SMALL TABLETS (481px - 767px) */
+/* ---------------------------------------------------
+   RESPONSIVE DESIGN — MOBILE OPTIMIZATIONS
+--------------------------------------------------- */
+/* TABLETS AND BELOW (max 767px) */
 @media (max-width: 767px) {
   .staff-container {
     padding: 1rem;
   }
-
-  .staff-header {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-  }
-
   .staff-header h1 {
     font-size: 1.75rem;
   }
-
-  .staff-header p {
-    font-size: 0.95rem;
-  }
-
   .orders-section {
     padding: 1rem;
     border-radius: var(--radius-md);
+    /* Enable horizontal scrolling with smooth touch support */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-
   .orders-section h2 {
     font-size: 1.25rem;
-  }
-
-  /* Horizontal scroll for table on smaller screens */
-  .orders-table {
-    min-width: 600px;
-    font-size: 0.875rem;
-  }
-
-  .orders-table thead th,
-  .orders-table tbody td {
-    padding: 0.75rem 0.625rem;
-  }
-
-  .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-}
-
-/* MOBILE PORTRAIT (max 480px) */
-@media (max-width: 480px) {
-  .staff-container {
-    padding: 0.75rem;
-  }
-
-  .staff-header {
     margin-bottom: 1rem;
   }
-
+  /* Make table scrollable on mobile */
+  .orders-table {
+    display: block;
+    min-width: 650px;
+    font-size: 0.8125rem;
+  }
+  .orders-table thead,
+  .orders-table tbody,
+  .orders-table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .orders-table thead th,
+  .orders-table tbody td {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+  /* Compact status badges on mobile */
+  .status-badge {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+  }
+  /* Stack buttons vertically on very small screens */
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+}
+/* SMALL MOBILE (max 480px) */
+@media (max-width: 480px) {
   .staff-header h1 {
     font-size: 1.5rem;
   }
-
   .staff-header p {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
-
   .orders-section {
     padding: 0.75rem;
-    border-radius: var(--radius-sm);
+    /* Ensure scrolling is smooth */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
-
   .orders-section h2 {
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
+    font-size: 1.125rem;
   }
-
-  /* Compact table for very small screens */
+  /* Compact table for small phones */
   .orders-table {
-    font-size: 0.8rem;
-    min-width: 550px;
+    min-width: 600px;
+    font-size: 0.75rem;
   }
-
   .orders-table thead th {
-    padding: 0.625rem 0.5rem;
-    font-size: 0.7rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.75rem;
   }
-
   .orders-table tbody td {
-    padding: 0.625rem 0.5rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.75rem;
   }
-
-  .btn {
-    padding: 0.5rem 0.875rem;
-    font-size: 0.8rem;
-    min-height: 40px;
-  }
-
   .status-badge {
-    padding: 0.25rem 0.625rem;
-    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
   }
-
+  /* Form elements */
   input[type="text"],
   input[type="email"],
   input[type="number"],
@@ -411,39 +303,49 @@ textarea:focus {
     min-height: 40px;
   }
 }
-
 /* EXTRA SMALL DEVICES (max 360px) */
 @media (max-width: 360px) {
   .staff-header h1 {
     font-size: 1.25rem;
   }
-
-  .orders-table {
-    min-width: 500px;
+  .orders-section {
+    /* Critical: ensure full horizontal scrollability */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
-
+  .orders-table {
+    min-width: 550px;
+    font-size: 0.7rem;
+  }
+  .orders-table thead th,
+  .orders-table tbody td {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.7rem;
+  }
   .btn {
     width: 100%;
     margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+  }
+  .status-badge {
+    font-size: 0.625rem;
+    padding: 0.2rem 0.4rem;
   }
 }
-
 /* PRINT STYLES */
 @media print {
   .staff-container {
     background: #ffffff;
     padding: 1rem;
   }
-
   .orders-section {
     box-shadow: none;
     border: 1px solid var(--gray-300);
   }
-
   .btn {
     display: none;
   }
-
   .orders-table tbody tr:hover {
     background: inherit;
     transform: none;
