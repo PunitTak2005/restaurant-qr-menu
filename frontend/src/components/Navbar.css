@@ -1,86 +1,185 @@
 /* Navbar.css */
+
+/* Main navbar container */
 .navbar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  background-color: #1f2937;
-  padding: 0.75rem 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  padding: 12px 32px;
+  background: #111;
+  color: #fff;
+  width: 100%;
+  box-shadow: 0 3px 12px rgba(44, 62, 80, 0.07);
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  width: 100%;
   z-index: 2000;
   min-height: 62px;
 }
 
-.navbar ul {
+/* Left side - Logo and links */
+.navbar-left {
   display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: 1rem;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
-.navbar li {
-  margin: 0;
+/* Logo styling */
+.navbar-logo {
+  width: 50px;
+  margin-right: 16px;
 }
 
-.navbar a {
-  color: #e5e7eb;
+/* Navigation links */
+.navbar-link {
+  margin-right: 15px;
+  color: #f8f9fa;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
   font-weight: 500;
+  font-size: 1.07rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
 }
 
-.navbar a:hover {
-  background-color: #374151;
-  transition: background-color 0.3s ease;
+.navbar-link:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* Tablet Styles - 768px and below */
+/* Right side - Auth controls */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Welcome text */
+.navbar-welcome {
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Logout button */
+.navbar-logout-btn {
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 7px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.05rem;
+  transition: background 0.22s;
+  white-space: nowrap;
+}
+
+.navbar-logout-btn:hover {
+  background: #d35400;
+}
+
+/* Sign up button */
+.navbar-signup-btn {
+  background: #e67e22;
+  color: #fff;
+  border-radius: 24px;
+  padding: 7px 18px;
+  margin-left: 3px;
+  font-weight: 600;
+  font-size: 1.07rem;
+  text-decoration: none;
+  transition: background 0.22s;
+  white-space: nowrap;
+}
+
+.navbar-signup-btn:hover {
+  background: #d35400;
+}
+
+/* Tablet breakpoint - 768px */
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column;
-    padding: 1rem;
+    padding: 10px 20px;
     min-height: auto;
-  }
-
-  .navbar ul {
     flex-direction: column;
-    width: 100%;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 12px;
   }
 
-  .navbar li {
+  .navbar-left {
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
+    align-items: center;
   }
 
-  .navbar a {
-    display: block;
-    width: 100%;
-    text-align: center;
-    padding: 0.75rem;
+  .navbar-logo {
+    width: 40px;
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+
+  .navbar-link {
     font-size: 0.95rem;
+    padding: 5px 8px;
+    margin-right: 0;
+  }
+
+  .navbar-right {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .navbar-welcome {
+    font-size: 0.9rem;
+  }
+
+  .navbar-logout-btn,
+  .navbar-signup-btn {
+    font-size: 0.95rem;
+    padding: 6px 14px;
   }
 }
 
-/* Mobile Styles - 480px and below */
+/* Mobile breakpoint - 480px */
 @media (max-width: 480px) {
   .navbar {
-    padding: 0.75rem 0.5rem;
+    padding: 8px 12px;
+    gap: 10px;
   }
 
-  .navbar ul {
-    gap: 0.25rem;
+  .navbar-left {
+    gap: 8px;
   }
 
-  .navbar a {
-    padding: 0.6rem 0.5rem;
-    font-size: 0.875rem;
-    border-radius: 0.25rem;
+  .navbar-logo {
+    width: 35px;
+    margin-bottom: 6px;
+  }
+
+  .navbar-link {
+    font-size: 0.85rem;
+    padding: 4px 6px;
+  }
+
+  .navbar-right {
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .navbar-welcome {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .navbar-logout-btn,
+  .navbar-signup-btn {
+    font-size: 0.85rem;
+    padding: 5px 12px;
+    width: 100%;
+    text-align: center;
   }
 }
