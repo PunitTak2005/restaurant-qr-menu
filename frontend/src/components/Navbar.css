@@ -1,94 +1,104 @@
+/* Navbar.css */
 .navbar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 32px;
-  background: #111;
-  color: #fff;
+  background-color: #1f2937;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;       /* <--- Add this! */
+  top: 0; left: 0; right: 0;
   width: 100%;
-  box-shadow: 0 3px 12px rgba(44,62,80,0.07);
-  position: fixed;
-  top: 0;
-  left: 0;
   z-index: 2000;
-  min-height: 62px;
+  min-height: 62px;      /* <--- matches your code, adjust if you change padding/font */
 }
-.navbar-left {
+
+/* ...the rest of your styles ... */
+
+
+.navbar ul {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1rem;
 }
-.hamburger {
-  display: none;
-  flex-direction: column;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  margin-left: 5px;
+
+.navbar li {
+  margin: 0;
 }
-.hamburger span {
-  display: block;
-  width: 26px;
-  height: 3px;
-  background: #fff;
-  margin: 3px 0;
-  border-radius: 2px;
-  transition: 0.3s;
-}
-.navbar-links {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.signup-link {
-  background: #e67e22;
-  color: #fff;
-  border-radius: 24px;
-  padding: 7px 18px;
-  margin-left: 3px;
-  font-weight: 600;
-  font-size: 1.07rem;
+
+.navbar a {
+  color: #e5e7eb;
   text-decoration: none;
-  transition: background 0.22s;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
-.navbar-auth {
-  display: flex;
+
+.navbar a:hover {
+  background-color: #374151;
+  color: #ffffff;
+}
+
+/* ✅ Admin Dashboard Link */
+.admin-dashboard-link {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  color: white !important;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-dashboard-link:hover {
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+.admin-dashboard-link::before {
+  content: "👨‍💼";
+  margin-right: 0.5rem;
+}
+
+/* ✅ Owner Dashboard Link */
+.owner-dashboard-link {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: white !important;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.owner-dashboard-link:hover {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+
+.owner-dashboard-link::before {
+  content: "👑";
+  margin-right: 0.5rem;
+}
+
+/* Badge effect */
+.dashboard-link {
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
 }
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: row;
-    padding: 10px 12px;
-  }
-  .navbar-links {
-    position: absolute;
-    top: 62px;
-    left: 0;
-    width: 100vw;
-    background: #181818;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-    display: none;
-  }
-  .navbar-links.open {
-    display: flex;
-    animation: fadeIn 0.23s;
-    box-shadow: 0 8px 24px rgba(44,62,80,0.11);
-    border-top: 1px solid #222;
-  }
-  .navbar-links a, .navbar-auth {
-    padding: 14px 24px;
-    width: 100%;
-    border-bottom: 1px solid #222;
-  }
-  .hamburger {
-    display: flex;
-  }
+
+.dashboard-link::after {
+  content: "Dashboard";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #f59e0b;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
 }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-16px);}
-  to { opacity: 1; transform: none;}
-}
+
