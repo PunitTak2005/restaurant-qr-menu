@@ -1,151 +1,31 @@
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #1f2937;
-  padding: 0.75rem 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  width: 100%;
-  z-index: 2000;
-  min-height: 62px;
-  font-family: "Roboto", "Segoe UI", Arial, sans-serif;
-}
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "./Navbar.css";
 
-/* --- Menu List --- */
-.navbar ul {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: 1rem;
-}
+export default function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
 
-.navbar li {
-  margin: 0;
-}
+  // Close menu on desktop resize, navigation, etc. (add as needed)
 
-.navbar a {
-  color: #e5e7eb;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  font-size: 1rem;
-  white-space: nowrap;
-}
+  return (
+    <nav className="navbar">
+      <span className="navbar-logo">Digital Dine</span>
+      
+      <button
+        className="navbar-hamburger"
+        onClick={() => setMenuOpen((v) => !v)}
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
 
-.navbar a:hover {
-  background-color: #374151;
-  color: #ffffff;
-}
-
-/* --- Admin Dashboard Link --- */
-.admin-dashboard-link {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
-  color: white !important;
-  font-weight: 600;
-  position: relative;
-  overflow: hidden;
-}
-
-.admin-dashboard-link:hover {
-  background: linear-gradient(135deg, #b91c1c, #dc2626);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
-}
-
-.admin-dashboard-link::before {
-  content: "👨‍💼";
-  margin-right: 0.5rem;
-}
-
-/* --- Owner Dashboard Link --- */
-.owner-dashboard-link {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  color: white !important;
-  font-weight: 600;
-  position: relative;
-  overflow: hidden;
-}
-
-.owner-dashboard-link:hover {
-  background: linear-gradient(135deg, #6d28d9, #9333ea);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
-}
-
-.owner-dashboard-link::before {
-  content: "👑";
-  margin-right: 0.5rem;
-}
-
-/* --- Badge effect --- */
-.dashboard-link {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-.dashboard-link::after {
-  content: "Dashboard";
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #f59e0b;
-  color: white;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: 600;
-  z-index: 10;
-}
-
-/* --- Mobile view --- */
-@media (max-width: 700px) {
-  .navbar {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0.5rem 0.5rem 0.5rem 0.85rem;
-    min-height: 54px;
-  }
-  .navbar ul {
-    flex-direction: column;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-  }
-  .navbar a,
-  .navbar .dashboard-link {
-    font-size: 0.96rem;
-    padding: 0.75rem 0.6rem;
-    border-radius: 0.55rem;
-    width: 100%;
-    text-align: left;
-    box-sizing: border-box;
-  }
-  .dashboard-link::after {
-    top: 4px;
-    right: 6px;
-  }
-  .admin-dashboard-link,
-  .owner-dashboard-link {
-    font-size: 1.05rem;
-    margin-bottom: 2px;
-  }
-}
-
-/* --- Prevent horizontal scroll on small screens --- */
-@media (max-width: 450px) {
-  .navbar {
-    padding: 0.27rem 0.3rem;
-    min-height: 46px;
-  }
-  .navbar a,
-  .navbar .dashboard-link {
-    font-size: 0.84rem;
-    padding: 0.55rem 0.47rem;
-    border-radius: 0.6rem;
-  }
+      <ul className={menuOpen ? "open" : ""}>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/menu/cafe-delight">Menu</Link></li>
+        <li><Link to="/orders">Orders</Link></li>
+        <li><Link className="admin-dashboard-link dashboard-link" to="/admin">Admin</Link></li>
+        <li><Link className="owner-dashboard-link dashboard-link" to="/owner">Owner</Link></li>
+      </ul>
+    </nav>
+  );
 }
