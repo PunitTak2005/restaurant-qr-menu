@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
-import { Server as SocketIOServer } from "socket.io"; // Add this if using Socket.io
+import { Server as SocketIOServer } from "socket.io"; // Add this import
 
 // Route Imports
 import orderRoutes from "./routes/orderRoutes.js";
@@ -18,10 +18,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/restaurantDB";
 
-// Specify ALL allowed frontend URLs here (local + deployed)
+// Allowed frontend URLs for CORS (both local & deployed)
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://restaurant-qr-menu-1.onrender.com" // ← your deployed frontend
+  "https://restaurant-qr-menu-1.onrender.com" // ← your deployed frontend!
 ];
 
 // -----------------------
@@ -29,10 +29,9 @@ const allowedOrigins = [
 // -----------------------
 app.use(
   cors({
-    origin: function(origin, callback) {
-      // allow requests with no origin (like mobile apps, curl)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like curl, mobile apps, or SSR)
+      if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       } else {
         return callback(new Error("Not allowed by CORS"));
