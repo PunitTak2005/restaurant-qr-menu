@@ -126,7 +126,7 @@ body {
   width: 100%;
   max-width: 260px;
   height: 180px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 12px;
   margin-bottom: 1.2rem;
   transition: transform 0.35s ease;
@@ -212,6 +212,9 @@ body {
   .menu-card {
     padding: 1.3rem 0.7rem;
   }
+  .menu-img {
+    max-height: 160px;
+  }
 }
 @media (max-width: 480px) {
   :root {
@@ -231,7 +234,7 @@ body {
     font-size: 0.9rem;
   }
   .menu-img {
-    height: 120px;
+    max-height: 140px;
   }
   .menu-card {
     padding: 0.9rem 0.3rem;
@@ -284,4 +287,3 @@ body {
     transform: translateX(-50%) translateY(-10px);
   }
 }
-
