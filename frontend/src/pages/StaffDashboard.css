@@ -1,9 +1,10 @@
 /* ---------------------------------------------------
-   STAFF DASHBOARD — ULTRA-PROFESSIONAL DESIGN MOBILE & TABLET
+   STAFF DASHBOARD — ULTRA-PROFESSIONAL RESPONSIVE DESIGN
+   Mobile-first, touch-friendly, adaptive navigation
 --------------------------------------------------- */
 
 :root {
-  --primary-color: #306fd0; /* deeper, richer blue */
+  --primary-color: #306fd0;
   --primary-gradient: linear-gradient(90deg, #2562a9 0%, #2b87ff 100%);
   --primary-dark: #204d80;
   --primary-light: #5ca7f8;
@@ -30,282 +31,377 @@
   --border-main: 2px solid #e5e9f2;
 }
 
+/* ========== CONTAINER ========== */
 .staff-container {
   max-width: 100vw;
   margin: 0;
   padding: 0;
-  background: var(--primary-gradient);
+  background: var(--neutral-bg);
   min-height: 100vh;
   color: var(--gray-900);
   font-family: 'Segoe UI', 'Roboto', 'Inter', system-ui, Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-lg);
 }
 
-.staff-header {
+/* ========== DASHBOARD HEADER/TITLE ========== */
+.staff-header,
+.dashboard-title,
+.staff-dashboard-title {
   text-align: left;
-  margin: 0 0 24px 0;
-  padding: 26px 16px 8px 16px;
-  background: var(--neutral-bg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  animation: fadeInDown var(--transition-main);
-}
-.staff-header h1 {
+  margin: 0 0 32px 0;
+  padding: 32px 24px 16px 24px;
+  background: var(--primary-gradient);
+  color: white;
   font-size: 2rem;
-  color: var(--primary-color);
-  font-weight: 800;
-  letter-spacing: 0.7px;
-  margin-bottom: 2px;
-  font-family: inherit;
-}
-.staff-header p {
-  font-size: 1.08rem;
-  color: var(--gray-500);
-  margin-top: 4px;
-  font-weight: 400;
-}
-
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-24px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.analytics-section, .orders-section {
-  margin: 0;
-  padding: 0;
-}
-
-.metrics-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  width: 100vw;
-}
-.metric-card {
-  flex: 1 1 100%;
-  border-radius: var(--radius-sm);
-  background: var(--neutral-card);
-  box-shadow: var(--shadow-md);
-  min-width: 0;
-  padding: 10px 8px;
-  margin: 0;
-  border: var(--border-main);
-  overflow-wrap: break-word;
-  margin-bottom: 5px;
-  transition: box-shadow var(--transition-main), border-color var(--transition-main);
-}
-.metric-card:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
-}
-.metric-card h4 {
-  font-size: 1.11rem;
-  color: var(--primary-dark);
   font-weight: 700;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
-.metric-card ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: 0.97rem;
-}
-.metric-card li {
-  color: var(--gray-700);
-  margin-bottom: 3px;
-  overflow-wrap: anywhere;
-}
-.metric-card li:last-child { margin-bottom: 0; }
-.metric-icon {
-  color: var(--primary-color);
-}
-.charts-group {
+
+/* ========== SIDEBAR NAVIGATION (Desktop) ========== */
+.sidebar-nav,
+.staff-sidebar,
+.navigation-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background: white;
+  box-shadow: var(--shadow-md);
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  align-items: stretch;
-  width: 100vw;
-}
-.chart-box {
-  flex: 1 1 100%;
-  min-width: 0;
-  background: var(--neutral-card);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
-  margin: 0 auto 10px auto;
-  padding: 9px 7px;
-  border: var(--border-main);
-  overflow-wrap: break-word;
+  gap: 12px;
+  z-index: 100;
 }
 
-.chart-box canvas, .chart-box svg {
-  max-width: 100% !important;
-  height: auto !important;
+.sidebar-nav a,
+.staff-sidebar a,
+.navigation-sidebar a {
   display: block;
-}
-.chart-box .chart-legend, .chart-box .apexcharts-legend, .chart-box .recharts-legend-wrapper {
-  flex-wrap: wrap;
-  word-break: break-word;
-  white-space: normal;
-  justify-content: center;
-  margin-top: 4px;
-}
-
-.orders-section {
-  margin-top: 14px;
-  padding: 0;
-}
-.orders-table {
-  width: 100vw;
-  background: var(--neutral-card);
+  padding: 16px 20px;
+  text-decoration: none;
+  color: var(--gray-700);
+  font-size: 1.1rem;
+  font-weight: 500;
   border-radius: var(--radius-sm);
-  overflow-x: auto;
-  font-size: 0.95rem;
-  table-layout: fixed;
-  box-shadow: var(--shadow-md);
-  border: var(--border-main);
-}
-.orders-table th, .orders-table td {
-  padding: 7px 5px;
-  text-align: left;
-  vertical-align: top;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  white-space: normal;
-  max-width: 90vw;
-}
-.orders-table th {
-  background: var(--gray-100);
-  color: var(--primary-dark);
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  border-bottom: var(--border-main);
-}
-.orders-table tr:nth-child(even) {
+  transition: all var(--transition-main);
   background: var(--gray-50);
 }
-.orders-table td {
-  color: var(--gray-900);
-}
-/* STATUS BADGES */
-.status {
-  border-radius: var(--radius-xs);
-  padding: 4px 8px;
-  font-size: 0.98rem;
-  font-weight: 700;
-  display: inline-block;
-  color: #fff;
-  text-transform: capitalize;
-  transition: background 0.2s, color 0.2s, border 0.18s;
-  box-shadow: 0 2px 12px rgba(44,62,80,0.18);
-}
-.status.pending { background: linear-gradient(90deg, #ffc800, #ff9c23); color: #223347; border: 1px solid #ffb700; }
-.status.preparing { background: linear-gradient(90deg, #2562a9, #2b87ff); color: #fff; border: 1px solid #204d80; }
-.status.ready { background: linear-gradient(90deg, #13b786, #4cc472); color: #fff; border: 1px solid #0d9765; }
-.status.served { background: linear-gradient(90deg, #2b87ff, #5ca7f8); color: #fff; border: 1px solid #2562a9; }
-.status.paid { background: linear-gradient(90deg, #13b786, #10a18a); color: #fff; border: 1px solid #0d9765; }
-.status.cancelled { background: linear-gradient(90deg, #e03e3e, #d44a4a); color: #fff; border: 1px solid #ba2c2c; }
 
-/* BUTTONS AND LINKS */
-button, a {
-  transition: box-shadow 0.22s, background 0.18s, color 0.19s, transform 0.22s;
-  box-shadow: 0 2px 12px rgba(44,62,80,0.09);
-  border-radius: var(--radius-sm);
-}
-button:hover, a:hover {
+.sidebar-nav a:hover,
+.staff-sidebar a:hover,
+.navigation-sidebar a:hover {
   background: var(--primary-gradient);
-  color: #fff;
-  box-shadow: 0 8px 30px rgba(44,62,80,0.17);
-  transform: translateY(-2px) scale(1.03);
+  color: white;
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
 }
 
-.loading, .error {
-  color: var(--primary-color);
-  font-size: 1.09rem;
-  text-align: center;
-  margin: 18px 0 8px 0;
-  font-weight: 500;
+/* ========== ORDERS TABLE (Desktop) ========== */
+.orders-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 24px 0;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 20px;
 }
-.error { color: var(--danger-color); }
 
-/*--- RESPONSIVE DESIGN (NEW BREAKPOINTS) ---*/
-@media (max-width: 1200px) {
-  .staff-container, .metrics-group, .charts-group, .orders-table {
-    max-width: 100vw;
-    padding: 0;
-    margin: 0;
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.orders-table th {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 18px 16px;
+  text-align: left;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-bottom: 3px solid var(--primary-dark);
+}
+
+.orders-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 1rem;
+  color: var(--gray-700);
+}
+
+.orders-table tr:hover {
+  background: var(--gray-50);
+}
+
+/* ========== DROPDOWNS & INPUTS ========== */
+.orders-table select,
+.status-dropdown {
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-xs);
+  background: white;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all var(--transition-main);
+  min-width: 140px;
+}
+
+.orders-table select:hover,
+.status-dropdown:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ========== UPDATE BUTTONS (Bold, Gradient, Touch-friendly) ========== */
+.update-btn,
+.orders-table button,
+button.update-status-btn {
+  padding: 14px 28px;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-main);
+  min-height: 48px;
+  min-width: 120px;
+}
+
+.update-btn:hover,
+.orders-table button:hover,
+button.update-status-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  background: var(--primary-dark);
+}
+
+.update-btn:active,
+.orders-table button:active,
+button.update-status-btn:active {
+  transform: translateY(0);
+}
+
+/* ========== FOOTER ========== */
+.staff-footer,
+.dashboard-footer,
+footer {
+  margin-top: auto;
+  padding: 32px 24px;
+  background: var(--gray-900);
+  color: white;
+  font-size: 1rem;
+  line-height: 1.6;
+  border-top: 4px solid var(--primary-color);
+}
+
+.staff-footer p,
+.dashboard-footer p,
+footer p {
+  margin: 8px 0;
+}
+
+.staff-footer a,
+.dashboard-footer a,
+footer a {
+  color: var(--primary-light);
+  text-decoration: none;
+}
+
+.staff-footer a:hover,
+.dashboard-footer a:hover,
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ========================================
+   RESPONSIVE: MOBILE & TABLET (≤600px)
+======================================== */
+
+@media (max-width: 600px) {
+  
+  /* --- Header/Title: Compact but readable --- */
+  .staff-header,
+  .dashboard-title,
+  .staff-dashboard-title {
+    font-size: 1.5rem;
+    padding: 20px 16px 12px 16px;
+    margin: 0 0 20px 0;
+  }
+  
+  /* --- Sidebar becomes BOTTOM fixed navigation --- */
+  .sidebar-nav,
+  .staff-sidebar,
+  .navigation-sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: auto;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 12px 8px;
+    background: white;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+    z-index: 200;
+  }
+  
+  .sidebar-nav a,
+  .staff-sidebar a,
+  .navigation-sidebar a {
+    padding: 14px 10px;
+    font-size: 0.85rem;
+    text-align: center;
+    flex: 1;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sidebar-nav a:hover,
+  .staff-sidebar a:hover,
+  .navigation-sidebar a:hover {
+    transform: none;
+  }
+  
+  /* --- Orders Table: Horizontal scroll wrapper --- */
+  .orders-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    margin: 16px 0 80px 0; /* bottom margin for fixed nav */
+  }
+  
+  .orders-table {
+    min-width: 700px; /* force horizontal scroll */
+  }
+  
+  .orders-table th,
+  .orders-table td {
+    padding: 14px 12px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  
+  /* --- Dropdowns & Buttons: Touch-friendly --- */
+  .orders-table select,
+  .status-dropdown {
+    padding: 12px 10px;
+    font-size: 1rem;
+    min-width: 130px;
+    min-height: 44px;
+  }
+  
+  .update-btn,
+  .orders-table button,
+  button.update-status-btn {
+    padding: 14px 20px;
+    font-size: 1rem;
+    min-height: 48px;
+    min-width: 100px;
+  }
+  
+  /* --- Footer: Always readable --- */
+  .staff-footer,
+  .dashboard-footer,
+  footer {
+    padding: 24px 16px 90px 16px; /* extra bottom padding for fixed nav */
+    font-size: 0.95rem;
   }
 }
-@media (max-width: 900px) {
-  .metrics-group, .charts-group {
-    gap: 10px;
-    flex-direction: column;
+
+/* ========================================
+   EXTRA RESPONSIVE: CARD LAYOUT (≤480px)
+======================================== */
+
+@media (max-width: 480px) {
+  
+  /* --- Hide table, show card layout --- */
+  .orders-table-wrapper {
+    overflow-x: visible;
+    padding: 12px;
   }
-  .metric-card, .chart-box {
-    min-width: 0;
-    width: 100vw;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-md);
-    padding: 8px 3vw;
+  
+  .orders-table,
+  .orders-table thead,
+  .orders-table tbody,
+  .orders-table th,
+  .orders-table td,
+  .orders-table tr {
+    display: block;
   }
-  .orders-table th, .orders-table td {
-    max-width: 60vw;
-    padding: 6px 2vw;
+  
+  .orders-table thead {
+    display: none; /* hide table headers */
   }
-}
-@media (max-width: 768px) {
-  .staff-container {
-    padding: 3vw 0 0 0;
-    border-radius: 0;
-    box-shadow: var(--shadow-md);
-  }
-  .staff-header {
-    padding: 18px 7px 7px 7px;
+  
+  .orders-table tr {
+    margin-bottom: 20px;
+    background: white;
+    border: 2px solid var(--gray-200);
     border-radius: var(--radius-md);
-    font-size: 1.15rem;
-  }
-  .metrics-group, .charts-group {
-    flex-direction: column;
-    gap: 10px;
-    width: 100vw;
-  }
-  .metric-card, .chart-box {
-    border-radius: var(--radius-xs);
-    padding: 7px 2vw;
-    min-width: 0;
-    margin-bottom: 6px;
+    padding: 16px;
     box-shadow: var(--shadow-sm);
   }
-  .orders-table th, .orders-table td {
-    max-width: 40vw;
-    font-size: 0.94rem;
-    padding: 6px 2vw;
-  }
-}
-@media (max-width: 500px) {
-  .staff-header {
-    font-size: 0.98rem;
+  
+  .orders-table td {
+    border: none;
+    padding: 10px 0;
     text-align: left;
-    padding: 15px 3vw 6px 3vw;
-    margin-bottom: 12px;
+    position: relative;
+    padding-left: 50%;
+    white-space: normal;
   }
-  .metrics-group .metric-card {
-    padding: 4px 1vw;
-    margin-bottom: 6px;
-    box-shadow: var(--shadow-sm);
-    border-radius: var(--radius-xs);
-    min-width: 0 !important;
+  
+  .orders-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 45%;
+    padding-right: 10px;
+    font-weight: 700;
+    color: var(--gray-900);
+    text-align: left;
   }
-  .charts-group .chart-box {
-    padding: 5px 1vw;
-    margin-bottom: 8px;
-    border-radius: var(--radius-xs);
-    min-width: 0 !important;
+  
+  /* --- Buttons & Dropdowns in cards --- */
+  .orders-table select,
+  .status-dropdown {
+    width: 100%;
+    max-width: 100%;
   }
-  .orders-table th, .orders-table td {
-    padding: 4px 1vw;
-    font-size: 0.90rem;
-    max-width: 90vw;
+  
+  .update-btn,
+  .orders-table button,
+  button.update-status-btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  /* --- Header smaller on very small screens --- */
+  .staff-header,
+  .dashboard-title,
+  .staff-dashboard-title {
+    font-size: 1.3rem;
+    padding: 16px 12px 10px 12px;
+  }
+  
+  /* --- Bottom nav more compact --- */
+  .sidebar-nav a,
+  .staff-sidebar a,
+  .navigation-sidebar a {
+    font-size: 0.75rem;
+    padding: 10px 6px;
+    min-height: 50px;
   }
 }
