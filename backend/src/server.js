@@ -18,11 +18,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/restaurantDB";
 
+// -----------------------
+// ALLOWED ORIGINS FOR CORS
+// -----------------------
 // Specify ALL allowed frontend URLs here (local, Render, Vercel)
+// IMPORTANT: Vercel frontend (https://restaurant-qr-menu.vercel.app) is REQUIRED for production
+// Render frontend is optional but included for flexibility
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://restaurant-qr-menu-1.onrender.com", // Render frontend (if used)
-  "https://restaurant-qr-menu.vercel.app"      // Vercel frontend (required!)
+  "http://localhost:5173",                      // Local development
+  "https://restaurant-qr-menu-1.onrender.com",  // Render frontend (optional)
+  "https://restaurant-qr-menu.vercel.app"       // Vercel frontend (REQUIRED for production!)
 ];
 
 // -----------------------
@@ -33,9 +38,13 @@ app.use(
     origin: function (origin, callback) {
       // allow requests with no origin (mobile apps, curl, SSR)
       if (!origin) return callback(null, true);
+      
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       } else {
+        // Log CORS errors for debugging
+        console.error(`❌ CORS Error: Origin "${origin}" is not allowed`);
+        console.error(`✅ Allowed origins: ${allowedOrigins.join(", ")}`);
         return callback(new Error("Not allowed by CORS"));
       }
     },
@@ -43,6 +52,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -58,6 +68,7 @@ const io = new SocketIOServer(server, {
   },
   transports: ["websocket", "polling"],
 });
+
 export { io };
 
 app.use((req, res, next) => {
@@ -78,16 +89,26 @@ app.get("/", (req, res) => {
 // -----------------------
 // ROUTE REGISTRATION
 // -----------------------
+// Order routes handle /api/orders endpoints including PATCH /api/orders/:id/status
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 
 // -----------------------
-// 404 FALLBACK
+// 404 FALLBACK - UNKNOWN ROUTES
 // -----------------------
-app.all("*", (req, res) =>
-  res.status(404).json({ success: false, message: "Route not found" })
-);
+// This catches all unmatched routes and returns 404
+// Helps diagnose 404/502 errors by logging the attempted route
+app.all("*", (req, res) => {
+  console.error(`❌ 404 Error: Route not found - ${req.method} ${req.originalUrl}`);
+  console.error(`📍 Available routes: /api/orders, /api/auth, /api/admin`);
+  res.status(404).json({ 
+    success: false, 
+    message: "Route not found",
+    requestedRoute: req.originalUrl,
+    availableRoutes: ["/api/orders", "/api/auth", "/api/admin"]
+  });
+});
 
 // -----------------------
 // MONGODB CONNECTION + SERVER START
@@ -96,9 +117,12 @@ const start = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log("✅ MongoDB connected successfully");
-    server.listen(PORT, "0.0.0.0", () =>
-      console.log(`🚀 Server running on http://localhost:${PORT}`)
-    );
+    
+    server.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`✅ CORS enabled for: ${allowedOrigins.join(", ")}`);
+      console.log(`📍 API routes available: /api/orders, /api/auth, /api/admin`);
+    });
   } catch (err) {
     console.error("❌ MongoDB connection error:", err.message);
     process.exit(1);
