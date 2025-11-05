@@ -17,6 +17,11 @@
   min-height: 62px;
 }
 
+/* Ensure page content is not hidden by fixed navbar */
+.main-content {
+  padding-top: 62px;
+}
+
 /* Left side - Logo and links */
 .navbar-left {
   display: flex;
@@ -99,37 +104,81 @@
   background: #d35400;
 }
 
+/* Hamburger menu button */
+.navbar-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: background 0.2s;
+}
+
+.navbar-hamburger:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+/* Dropdown menu for mobile */
+.navbar-links-dropdown {
+  display: none;
+  flex-direction: column;
+  background: #222;
+  border-radius: 10px;
+  position: absolute;
+  top: 62px;
+  left: 0;
+  right: 0;
+  z-index: 1999;
+  padding: 12px 0;
+  box-shadow: 0 3px 20px rgba(44, 62, 80, 0.17);
+}
+
+.navbar-links-dropdown.open {
+  display: flex;
+}
+
+.navbar-links-dropdown .navbar-link {
+  margin: 0;
+  padding: 12px 24px;
+  width: 100%;
+  text-align: left;
+  border-radius: 0;
+}
+
+.navbar-links-dropdown .navbar-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* Tablet breakpoint - 768px */
 @media (max-width: 768px) {
   .navbar {
     padding: 10px 20px;
     min-height: auto;
-    flex-direction: column;
-    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .main-content {
+    padding-top: 72px;
+  }
+
+  /* Show hamburger, hide normal nav links */
+  .navbar-hamburger {
+    display: block;
   }
 
   .navbar-left {
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    align-items: center;
+    display: none;
   }
 
   .navbar-logo {
     width: 40px;
     margin-right: 0;
-    margin-bottom: 8px;
-  }
-
-  .navbar-link {
-    font-size: 0.95rem;
-    padding: 5px 8px;
-    margin-right: 0;
   }
 
   .navbar-right {
-    width: 100%;
-    justify-content: center;
     gap: 10px;
   }
 
@@ -140,7 +189,8 @@
   .navbar-logout-btn,
   .navbar-signup-btn {
     font-size: 0.95rem;
-    padding: 6px 14px;
+    padding: 8px 16px;
+    min-width: 80px;
   }
 }
 
@@ -151,23 +201,30 @@
     gap: 10px;
   }
 
-  .navbar-left {
-    gap: 8px;
+  .main-content {
+    padding-top: 75px;
   }
 
   .navbar-logo {
     width: 35px;
-    margin-bottom: 6px;
   }
 
-  .navbar-link {
-    font-size: 0.85rem;
-    padding: 4px 6px;
+  .navbar-hamburger {
+    font-size: 1.8rem;
+  }
+
+  .navbar-links-dropdown {
+    top: 58px;
+  }
+
+  .navbar-links-dropdown .navbar-link {
+    font-size: 0.95rem;
+    padding: 14px 20px;
   }
 
   .navbar-right {
     gap: 8px;
-    flex-direction: column;
+    flex-wrap: nowrap;
   }
 
   .navbar-welcome {
@@ -177,9 +234,9 @@
 
   .navbar-logout-btn,
   .navbar-signup-btn {
-    font-size: 0.85rem;
-    padding: 5px 12px;
-    width: 100%;
+    font-size: 0.9rem;
+    padding: 8px 14px;
+    width: auto;
     text-align: center;
   }
 }
