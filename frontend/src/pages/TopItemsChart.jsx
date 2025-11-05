@@ -1,6 +1,7 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const pieColors = [
@@ -9,22 +10,29 @@ const pieColors = [
 ];
 
 const TopItemsChart = ({ topItems }) => {
+  // Validate topItems is a non-empty array
+  if (!topItems || !Array.isArray(topItems) || topItems.length === 0) {
+    return (
+      <div style={{ width: '100%', maxWidth: 400 }}>
+        <h4>Top 5 Menu Items</h4>
+        <div className="chart-empty">No data available.</div>
+      </div>
+    );
+  }
+
   const pieData = {
-    labels: topItems?.map(i => i.name) || [],
+    labels: topItems.map(i => i.name),
     datasets: [{
-      data: topItems?.map(i => i.qty) || [],
+      data: topItems.map(i => i.qty),
       backgroundColor: pieColors,
       borderWidth: 1,
     }]
   };
+
   return (
     <div style={{ width: '100%', maxWidth: 400 }}>
       <h4>Top 5 Menu Items</h4>
-      {pieData.labels.length > 0 ? (
-        <Pie data={pieData} options={{ plugins: { legend: { display: true }}}} />
-      ) : (
-        <div className="chart-empty">No top item data</div>
-      )}
+      <Pie data={pieData} options={{ plugins: { legend: { display: true } } }} />
     </div>
   );
 };
