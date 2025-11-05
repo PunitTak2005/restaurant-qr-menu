@@ -68,6 +68,7 @@ const StaffDashboard = () => {
   return (
     <div className="staff-container">
       <header className="staff-header">
+        <h1></h1>
         <h1>Staff Dashboard</h1>
         <p>
           Welcome Staff! Review and manage table orders assigned to your team.
