@@ -1,226 +1,107 @@
 /* ---------------------------------------------------
    STAFF DASHBOARD — CLEAN MODERN DESIGN
 --------------------------------------------------- */
-
-.staff-container {
-  padding: 2rem;
-  background-color: #f9fafb;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color: #111827;
-  min-height: 100vh;
+.staff-container 
+{
+  
+padding: 2rem;
+  
+background-color: #f9fafb;
+  
+font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  
+color: #111827;
+  
+min-height: 100vh;
 }
-
 /* ---------------- HEADER ---------------- */
-.staff-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.staff-header 
+{
+  
+text-align: center;
+  
+margin-bottom: 2rem;
 }
-
-.staff-header h1 {
-  font-size: 2rem;
-  color: #6d28d9;
-  margin-bottom: 0.25rem;
-  letter-spacing: -0.5px;
+.staff-header h1 
+{
+  
+font-size: 2rem;
+  
+color: #6d28d9;
+  
+margin-bottom: 0.25rem;
+  
+letter-spacing: -0.5px;
 }
-
-.staff-header p {
-  color: #6b7280;
-  font-size: 1rem;
+.staff-header p 
+{
+  
+color: #6b7280;
+  
+font-size: 1rem;
 }
-
 /* ---------------- TABLE SECTION ---------------- */
-.orders-section {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.orders-section 
+{
+  
+background: #ffffff;
+  
+border-radius: 12px;
+  
+padding: 1rem;
+  
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.orders-section h2 {
-  font-size: 1.25rem;
-  color: #4c1d95;
-  margin-bottom: 1rem;
-}
-
-/* ---------------- TABLE STYLE ---------------- */
-.orders-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 10px;
-  overflow: hidden;
-  background-color: #fff;
-}
-
-.orders-table thead {
-  background: linear-gradient(90deg, #ede9fe, #ddd6fe);
-  color: #4c1d95;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.875rem;
-}
-
-.orders-table th {
-  padding: 0.85rem;
-  text-align: left;
-  font-weight: 600;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.orders-table td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 0.9375rem;
-  vertical-align: middle;
-  color: #374151;
-}
-
-/* Hover effect for row */
-.orders-table tbody tr:hover {
-  background-color: #f3f4f6;
-  transition: background 0.2s ease-in-out;
-}
-
-/* ---------------- STATUS LABEL COLORS ---------------- */
-.status {
-  display: inline-block;
-  padding: 0.35rem 0.75rem;
-  border-radius: 9999px;
-  font-weight: 600;
-  font-size: 0.8rem;
-  text-transform: capitalize;
-}
-
-.status.pending {
-  background-color: #fef3c7; /* amber light */
-  color: #92400e;
-}
-
-.status.completed {
-  background-color: #dcfce7; /* green light */
-  color: #166534;
-}
-
-.status.preparing {
-  background-color: #dbeafe; /* blue light */
-  color: #1e3a8a;
-}
-
-.status.ready {
-  background-color: #d1fae5; /* green-cyan */
-  color: #065f46;
-}
-
-.status.served {
-  background-color: #e0e7ff; /* gray-blue */
-  color: #3730a3;
-}
-
-.status.paid {
-  background-color: #bae6fd; /* blue-teal */
-  color: #0369a1;
-}
-
-.status.cancelled {
-  background-color: #fee2e2; /* red light */
-  color: #b91c1c;
-}
-
-/* ---------------- STATUS DROPDOWN & BUTTON SIDE-BY-SIDE ---------------- */
-.orders-table td select {
-  padding: 0.25rem 0.7rem;
-  margin-right: 0.5em;
-  border: 1px solid #c7d2fe;
-  border-radius: 6px;
-  background: #f5f3ff;
-  color: #3b3b48;
-  font-size: 0.97em;
-  transition: border 0.2s;
-  vertical-align: middle;
-  display: inline-block;
-  max-width: calc(70% - 0.5em); /* optional for layout balance */
-  box-sizing: border-box;
-}
-
-.orders-table td select:focus {
-  outline: none;
-  border-color: #6d28d9;
-  background: #ede9fe;
-}
-
-.orders-table td button {
-  background: #39a9db;
-  color: #fff;
-  padding: 0.28em 1.1em;
-  border: none;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 0.97em;
-  cursor: pointer;
-  margin-left: 0;
-  vertical-align: middle;
-  display: inline-block;
-  transition: background 0.15s;
-  white-space: nowrap;
-}
-
-.orders-table td button:hover,
-.orders-table td button:focus {
-  background: #0e81b1;
-}
-
-/* ---------------- RESPONSIVE DESIGN ---------------- */
+/* ---------------- MOBILE RESPONSIVE STYLES ---------------- */
 @media (max-width: 768px) {
-  .orders-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
+  .staff-container {
+    padding: 1rem;
+  }
+
+  .staff-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .staff-header p {
+    font-size: 0.9rem;
+  }
+
+  .orders-section {
+    padding: 0.75rem;
     border-radius: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .orders-table {
+    min-width: 600px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-container {
+    padding: 0.5rem;
+  }
+
+  .staff-header {
+    margin-bottom: 1rem;
+  }
+
+  .staff-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .staff-header p {
+    font-size: 0.85rem;
   }
 
   .orders-section {
     padding: 0.5rem;
   }
 
-  .staff-header h1 {
-    font-size: 1.6rem;
+  .orders-table {
+    font-size: 0.8rem;
   }
-
-  .orders-table th,
-  .orders-table td {
-    padding: 0.65rem;
-  }
-}
-
-/* ---------------- MISC & EFFECTS ---------------- */
-.loading,
-.error {
-  text-align: center;
-  font-size: 1rem;
-  padding: 1rem;
-  color: #6b7280;
-}
-
-.error {
-  color: #dc2626;
-}
-
-.orders-table td[data-label="Total"] {
-  font-weight: 600;
-  color: #111827;
-}
-
-.orders-table td[data-label="Customer"] small {
-  color: #6b7280;
-}
-
-.orders-table td[data-label="Table"] {
-  font-weight: 500;
-  color: #7c3aed;
-}
-
-/* Highlight row when hovering over it for a clean touch */
-.orders-table tbody tr:hover td {
-  background-color: #f5f3ff;
-  cursor: pointer;
 }
