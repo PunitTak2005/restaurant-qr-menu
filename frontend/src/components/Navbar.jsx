@@ -35,143 +35,61 @@ const Navbar = () => {
   };
 
   return (
-    <nav
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "12px 32px",
-        background: "#111",
-        color: "#fff",
-        width: "100%",
-        boxShadow: "0 3px 12px rgba(44,62,80,0.07)",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: 2000,
-        minHeight: "62px",
-      }}
-      className="navbar"
-    >
+    <nav className="navbar">
       {/* LEFT — Logo & Links */}
-      <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+      <div className="navbar-left">
         {logo && (
           <img
             src={logo}
             alt="Logo"
-            style={{ width: "50px", marginRight: "16px" }}
+            className="navbar-logo"
           />
         )}
 
-        <Link
-          to="/"
-          style={{
-            marginRight: "15px",
-            color: "#f8f9fa",
-            textDecoration: "none",
-            fontWeight: 500,
-            fontSize: "1.07rem",
-            padding: "6px 10px",
-            borderRadius: "6px",
-            transition: "background 0.18s, color 0.18s",
-          }}
-        >
+        <Link to="/" className="navbar-link">
           Home
         </Link>
-        <Link
-          to="/m/digital-dine"
-          style={{
-            marginRight: "15px",
-            color: "#f8f9fa",
-            textDecoration: "none",
-            fontWeight: 500,
-            fontSize: "1.07rem",
-            padding: "6px 10px",
-            borderRadius: "6px",
-            transition: "background 0.18s, color 0.18s",
-          }}
-        >
+        <Link to="/m/digital-dine" className="navbar-link">
           Menu
         </Link>
-        <Link
-          to="/cart"
-          style={{
-            marginRight: "15px",
-            color: "#f8f9fa",
-            textDecoration: "none",
-            fontWeight: 500,
-            fontSize: "1.07rem",
-            padding: "6px 10px",
-            borderRadius: "6px",
-            transition: "background 0.18s, color 0.18s",
-          }}
-        >
+        <Link to="/cart" className="navbar-link">
           Cart
         </Link>
 
-   
-       
-
-        {user?.role === "admin" && <Link to="/admin/dashboard">Admin Dashboard</Link>}
-        {user?.role === "owner" && <Link to="/owner/dashboard">Staff Dashboard</Link>}
-        {user && (<Link to="/my-orders">My Orders</Link>)}
-
+        {user?.role === "admin" && (
+          <Link to="/admin/dashboard" className="navbar-link">
+            Admin Dashboard
+          </Link>
+        )}
+        {user?.role === "owner" && (
+          <Link to="/owner/dashboard" className="navbar-link">
+            Staff Dashboard
+          </Link>
+        )}
+        {user && (
+          <Link to="/my-orders" className="navbar-link">
+            My Orders
+          </Link>
+        )}
       </div>
 
       {/* RIGHT — Auth Controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div className="navbar-right">
         {isAuthenticated && user ? (
           <>
-            <span style={{ fontSize: "1rem", fontWeight: 500 }}>
+            <span className="navbar-welcome">
               Welcome, {user?.name || user?.email || "User"}
             </span>
-            <button
-              onClick={handleLogout}
-              style={{
-                background: "#e67e22",
-                color: "#fff",
-                border: "none",
-                borderRadius: "24px",
-                padding: "7px 16px",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontSize: "1.05rem",
-                transition: "background 0.22s",
-              }}
-            >
+            <button onClick={handleLogout} className="navbar-logout-btn">
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link
-              to="/signin"
-              style={{
-                color: "#f8f9fa",
-                textDecoration: "none",
-                fontWeight: 500,
-                fontSize: "1.07rem",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                transition: "background 0.18s, color 0.18s",
-              }}
-            >
+            <Link to="/signin" className="navbar-link">
               Login
             </Link>
-            <Link
-              to="/signup"
-              style={{
-                background: "#e67e22",
-                color: "#fff",
-                borderRadius: "24px",
-                padding: "7px 18px",
-                marginLeft: "3px",
-                fontWeight: 600,
-                fontSize: "1.07rem",
-                textDecoration: "none",
-                transition: "background 0.22s",
-              }}
-            >
+            <Link to="/signup" className="navbar-signup-btn">
               Sign Up
             </Link>
           </>
