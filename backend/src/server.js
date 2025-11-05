@@ -3,12 +3,12 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
-
+import { Server as SocketIOServer } from "socket.io"; // Add this if using Socket.io
 
 // Route Imports
 import orderRoutes from "./routes/orderRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import adminRoutes from "./routes/admin.js";            // <<✅ ADD THIS LINE
+import adminRoutes from "./routes/admin.js";
 
 // -----------------------
 // ENV + APP INITIALIZATION
@@ -17,14 +17,27 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/restaurantDB";
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+
+// Specify ALL allowed frontend URLs here (local + deployed)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://restaurant-qr-menu-1.onrender.com" // ← your deployed frontend
+];
 
 // -----------------------
 // MIDDLEWARES & CORS
 // -----------------------
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: function(origin, callback) {
+      // allow requests with no origin (like mobile apps, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
@@ -38,7 +51,7 @@ app.use(express.urlencoded({ extended: true }));
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: CLIENT_URL,
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   },
@@ -66,10 +79,7 @@ app.get("/", (req, res) => {
 // -----------------------
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/admin", adminRoutes);              // <<✅ ADD THIS LINE
-
-// -----------------------
-
+app.use("/api/admin", adminRoutes);
 
 // -----------------------
 // 404 FALLBACK
