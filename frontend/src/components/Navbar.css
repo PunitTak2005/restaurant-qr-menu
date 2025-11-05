@@ -2,90 +2,93 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 22px;
+  padding: 12px 32px;
   background: #111;
   color: #fff;
+  width: 100%;
+  box-shadow: 0 3px 12px rgba(44,62,80,0.07);
   position: fixed;
   top: 0;
-  width: 100%;
+  left: 0;
   z-index: 2000;
   min-height: 62px;
-  box-shadow: 0 2px 8px rgba(44,62,80,0.07);
 }
-.navbar-logo {
-  font-weight: 600;
-  font-size: 1.2rem;
-  letter-spacing: 1px;
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
-.navbar-hamburger {
+.hamburger {
   display: none;
+  flex-direction: column;
   background: none;
   border: none;
-  color: #fff;
-  font-size: 2rem;
   cursor: pointer;
+  padding: 8px;
+  margin-left: 5px;
 }
-.navbar ul {
+.hamburger span {
+  display: block;
+  width: 26px;
+  height: 3px;
+  background: #fff;
+  margin: 3px 0;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+.navbar-links {
   display: flex;
-  gap: 18px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  align-items: center;
+  gap: 16px;
 }
-.navbar ul li {
-  margin: 0;
-}
-.navbar ul li a {
-  color: #f8f9fa;
-  text-decoration: none;
-  font-weight: 500;
+.signup-link {
+  background: #e67e22;
+  color: #fff;
+  border-radius: 24px;
+  padding: 7px 18px;
+  margin-left: 3px;
+  font-weight: 600;
   font-size: 1.07rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: background 0.18s;
+  text-decoration: none;
+  transition: background 0.22s;
 }
-.admin-dashboard-link, .owner-dashboard-link {
-  background: #333;
-  padding: 6px 16px;
-  border-radius: 8px;
+.navbar-auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 @media (max-width: 768px) {
   .navbar {
     flex-direction: row;
-    padding: 8px 10px;
-    min-height: 54px;
+    padding: 10px 12px;
   }
-  .navbar-logo {
-    font-size: 1rem;
-  }
-  .navbar-hamburger {
-    display: block;
-    margin-left: auto;
-  }
-  .navbar ul {
-    flex-direction: column;
+  .navbar-links {
     position: absolute;
-    top: 54px;
+    top: 62px;
     left: 0;
-    background: #222;
     width: 100vw;
-    box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+    background: #181818;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
     display: none;
-    z-index: 2100;
   }
-  .navbar ul.open {
+  .navbar-links.open {
     display: flex;
-    animation: fadeIn 0.2s;
+    animation: fadeIn 0.23s;
+    box-shadow: 0 8px 24px rgba(44,62,80,0.11);
+    border-top: 1px solid #222;
   }
-  .navbar ul li {
+  .navbar-links a, .navbar-auth {
+    padding: 14px 24px;
     width: 100%;
-    text-align: left;
-    padding: 12px 22px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #222;
+  }
+  .hamburger {
+    display: flex;
   }
 }
-
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-12px);}
+  from { opacity: 0; transform: translateY(-16px);}
   to { opacity: 1; transform: none;}
 }
