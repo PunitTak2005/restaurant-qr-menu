@@ -1,108 +1,44 @@
-import React, { useEffect, useState } from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
+import React from "react";
 import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-);
-
-const API_PREFIX = "http://localhost:5000/api";
-
-function BarChart() {
-  const [analytics, setAnalytics] = useState({
-    todayOrders: 0,
-    weekOrders: 0,
-    monthOrders: 0,
-    todayRevenue: 0,
-    weekRevenue: 0,
-    monthRevenue: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch(`${API_PREFIX}/admin/analytics`);
-        const data = await res.json();
-        setAnalytics(data);
-      } catch (err) {
-        // Optional: handle error
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  const data = {
-    labels: ["Today", "This Week", "This Month"],
+const AnalyticsChart = ({ tableUsage }) => {
+  const barData = {
+    labels: tableUsage?.map(t => "Table " + t.number) || [],
     datasets: [
       {
-        label: "Total Orders",
-        data: [analytics.todayOrders, analytics.weekOrders, analytics.monthOrders],
-        backgroundColor: "#2b87ff",
-        datalabels: {
-          color: "#2b87ff",
-          align: 'end', // place inside blue bar, bottom
-          anchor: 'start',
-          font: { weight: "bold", size: 16 },
-          offset: -20, // move down
-        }
-      },
-      {
-        label: "Total Revenue",
-        data: [analytics.todayRevenue, analytics.weekRevenue, analytics.monthRevenue],
-        backgroundColor: "#44c77b",
-        datalabels: {
-          color: "#222",
-          align: 'start', // place above green bar, top
-          anchor: 'end',
-          font: { weight: "bold", size: 18 },
-          offset: 0, // move up
-        }
+        label: "Orders per Table",
+        data: tableUsage?.map(t => t.usage) || [],
+        backgroundColor: "#36A2EB",
       }
-    ],
+    ]
   };
-
-  const options = {
-    responsive: true,
+  const barOptions = {
     plugins: {
-      legend: { position: "top" },
-      title: {
-        display: true,
-        text: "Order Volume & Revenue per Period"
-      },
+      legend: { display: false },
       datalabels: {
-        display: true,
-        clamp: true,
-        formatter: function(value, context) {
-          return value;
-        }
+        anchor: 'end',
+        align: 'top',
+        color: '#1a237e',
+        font: { weight: 'bold' },
       }
     },
-    categoryPercentage: 0.6,
-    barPercentage: 0.6,
-    layout: { padding: { top: 24 } }
+    scales: {
+      y: { beginAtZero: true },
+    }
   };
+  return (
+    <div style={{ width: '100%', maxWidth: 450 }}>
+      <h4>Table Usage Analytics</h4>
+      {barData.labels.length > 0 ? (
+        <Bar data={barData} options={barOptions} />
+      ) : (
+        <div className="chart-empty">No table usage data</div>
+      )}
+    </div>
+  );
+};
 
-  if (loading) return <p>Loading chart...</p>;
-
-  return <Bar data={data} options={options} plugins={[ChartDataLabels]} />;
-}
-
-export default BarChart;
+export default AnalyticsChart;
