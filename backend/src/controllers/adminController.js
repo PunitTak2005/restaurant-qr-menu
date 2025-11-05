@@ -20,32 +20,52 @@ export const getAnalytics = async (req, res) => {
       Order.countDocuments({ createdAt: { $gte: getStartOf("week") } }),
       Order.countDocuments({ createdAt: { $gte: getStartOf("month") } })
     ]);
+
     async function revenueAgg(from) {
       const agg = await Order.aggregate([
         { $match: { createdAt: { $gte: from } } },
-        { $group: { _id: null, sum: { $sum: "$totalPrice" }} }
+        { $group: { _id: null, sum: { $sum: "$totalPrice" } } }
       ]);
       return agg[0]?.sum || 0;
     }
+
     const [todayRevenue, weekRevenue, monthRevenue] = await Promise.all([
       revenueAgg(getStartOf("today")),
       revenueAgg(getStartOf("week")),
       revenueAgg(getStartOf("month"))
     ]);
-    const topItemsAgg = await Order.aggregate([
-      { $match: { createdAt: { $gte: new Date(Date.now() - 7*24*60*60*1000) } } },
+
+    const topItems = await Order.aggregate([
       { $unwind: "$items" },
-      { $group: { _id: "$items.name", qty: { $sum: "$items.qty" }} },
-      { $sort: { qty: -1 } },
-      { $limit: 5 },
-      { $project: { name: "$_id", qty: 1, _id: 0 } }
+      { $group: {
+          _id: "$items.menuItemId",
+          orderCount: { $sum: "$items.qty" }
+        }
+      },
+      { $lookup: {
+          from: "menuitems",
+          localField: "_id",
+          foreignField: "_id",
+          as: "item"
+        }
+      },
+      { $unwind: "$item" },
+      { $project: {
+          name: "$item.name",
+          orderCount: 1
+        }
+      },
+      { $sort: { orderCount: -1 } },
+      { $limit: 5 }
     ]);
-    const tableAgg = await Order.aggregate([
+
+    const tableUsage = await Order.aggregate([
       { $match: { createdAt: { $gte: new Date(Date.now() - 30*24*60*60*1000) } } },
-      { $group: { _id: "$table", usage: { $sum: 1 } } },
-      { $sort: { usage: -1 } },
-      { $project: { number: "$_id", usage: 1, _id: 0 } }
+      { $group: { _id: "$table", orderCount: { $sum: 1 } } },
+      { $sort: { orderCount: -1 } },
+      { $project: { number: "$_id", orderCount: 1, _id: 0 } }
     ]);
+
     // Debug logs
     console.log("todayOrders:", todayOrders);
     console.log("weekOrders:", weekOrders);
@@ -53,8 +73,9 @@ export const getAnalytics = async (req, res) => {
     console.log("todayRevenue:", todayRevenue);
     console.log("weekRevenue:", weekRevenue);
     console.log("monthRevenue:", monthRevenue);
-    console.log("topItemsAgg:", topItemsAgg);
-    console.log("tableAgg:", tableAgg);
+    console.log("topItems:", topItems);
+    console.log("tableUsage:", tableUsage);
+
     res.json({
       todayOrders,
       weekOrders,
@@ -62,8 +83,8 @@ export const getAnalytics = async (req, res) => {
       todayRevenue,
       weekRevenue,
       monthRevenue,
-      topItems: topItemsAgg,
-      tableUsage: tableAgg
+      topItems,
+      tableUsage
     });
   } catch (err) {
     res.status(500).json({ error: err.message || "Analytics failed" });
