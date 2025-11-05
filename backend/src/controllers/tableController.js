@@ -5,8 +5,8 @@ export const getTableBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
 
-    // Find table by QR slug
-    const table = await Table.findOne({ slug });
+    // Correctly find table by QR slug (field is qrSlug)
+    const table = await Table.findOne({ qrSlug: slug });
 
     if (!table) {
       return res.status(404).json({
@@ -22,7 +22,7 @@ export const getTableBySlug = async (req, res) => {
       data: {
         tableNumber: table.number,
         menuLink: `/menu/items?table=${table._id}`,
-        qrSlug: table.slug,
+        qrSlug: table.qrSlug,
         tableId: table._id
       }
     });
