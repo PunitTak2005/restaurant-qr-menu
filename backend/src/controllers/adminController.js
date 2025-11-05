@@ -37,12 +37,14 @@ export const getAnalytics = async (req, res) => {
 
     const topItems = await Order.aggregate([
       { $unwind: "$items" },
-      { $group: {
+      {
+        $group: {
           _id: "$items.menuItemId",
           orderCount: { $sum: "$items.qty" }
         }
       },
-      { $lookup: {
+      {
+        $lookup: {
           from: "menuitems",
           localField: "_id",
           foreignField: "_id",
@@ -50,7 +52,8 @@ export const getAnalytics = async (req, res) => {
         }
       },
       { $unwind: "$item" },
-      { $project: {
+      {
+        $project: {
           name: "$item.name",
           orderCount: 1
         }
@@ -59,11 +62,27 @@ export const getAnalytics = async (req, res) => {
       { $limit: 5 }
     ]);
 
-    const tableUsage = await Order.aggregate([
-      { $match: { createdAt: { $gte: new Date(Date.now() - 30*24*60*60*1000) } } },
-      { $group: { _id: "$table", orderCount: { $sum: 1 } } },
-      { $sort: { orderCount: -1 } },
-      { $project: { number: "$_id", orderCount: 1, _id: 0 } }
+    const topTables = await Order.aggregate([
+      { $group: {
+          _id: "$tableId",
+          usageCount: { $sum: 1 }
+        }
+      },
+      { $lookup: {
+          from: "tables",
+          localField: "_id",
+          foreignField: "_id",
+          as: "table"
+        }
+      },
+      { $unwind: "$table" },
+      { $project: {
+          tableNumber: "$table.number",
+          usageCount: 1
+        }
+      },
+      { $sort: { usageCount: -1 } },
+      { $limit: 5 }
     ]);
 
     // Debug logs
@@ -74,7 +93,7 @@ export const getAnalytics = async (req, res) => {
     console.log("weekRevenue:", weekRevenue);
     console.log("monthRevenue:", monthRevenue);
     console.log("topItems:", topItems);
-    console.log("tableUsage:", tableUsage);
+    console.log("topTables:", topTables);
 
     res.json({
       todayOrders,
@@ -84,7 +103,7 @@ export const getAnalytics = async (req, res) => {
       weekRevenue,
       monthRevenue,
       topItems,
-      tableUsage
+      topTables
     });
   } catch (err) {
     res.status(500).json({ error: err.message || "Analytics failed" });
