@@ -5,6 +5,12 @@ import { useCart } from "../context/useCart";
 import { useAuth } from "../context/AuthContext";
 import "./CartPage.css";
 
+// ----------- ENVIRONMENT-AWARE API PREFIX -----------
+// For Vite, use VITE_API_BASE_URL; fallback to Render
+const API_PREFIX =
+  import.meta.env.VITE_API_BASE_URL || "https://restaurant-qr-menu-stjp.onrender.com/api";
+// -----------------------------------------------------
+
 const CartPage = () => {
   const {
     cartItems,
@@ -27,7 +33,7 @@ const CartPage = () => {
   useEffect(() => {
     async function fetchTables() {
       try {
-        const res = await axios.get("http://localhost:5000/api/tables");
+        const res = await axios.get(`${API_PREFIX}/tables`);
         if (res.data.success && Array.isArray(res.data.tables)) {
           setTables(res.data.tables);
         } else {
@@ -65,7 +71,7 @@ const CartPage = () => {
       const orderData = {
         userId: user._id,
         tableId: selectedTable._id,
-        tableNumber: selectedTable.number, // <=== required for backend
+        tableNumber: selectedTable.number,
         items: cartItems.map((it) => ({
           menuItemId: it._id,
           qty: it.quantity,
@@ -75,7 +81,7 @@ const CartPage = () => {
         status: "pending",
       };
 
-      const res = await axios.post("http://localhost:5000/api/orders", orderData, {
+      const res = await axios.post(`${API_PREFIX}/orders`, orderData, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -99,7 +105,6 @@ const CartPage = () => {
     navigate(`/m/${restaurantSlug || "default-restaurant"}`);
   };
 
-  // Handlers for increasing or decreasing quantity
   const handleIncreaseQty = (itemId, currentQty) => {
     updateQuantity(itemId, currentQty + 1);
   };
@@ -108,8 +113,6 @@ const CartPage = () => {
     if (currentQty > 1) {
       updateQuantity(itemId, currentQty - 1);
     } else {
-      // Optionally remove item when quantity hits zero
-      // removeFromCart(itemId);
       alert("Quantity cannot be less than 1. Use Clear Cart to remove items.");
     }
   };
@@ -134,7 +137,6 @@ const CartPage = () => {
     <div className="cart-container">
       <h1 className="cart-title">Your Shopping Cart</h1>
       <div className="cart-content">
-        {/* Cart items render placeholder */}
         <section className="cart-items">
           {cartItems.map((item) => (
             <div key={item._id} className="cart-item">
