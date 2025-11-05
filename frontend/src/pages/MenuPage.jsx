@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../utils/apiFetch";
 import coffeeImg from "../assets/coffee.jpg";
 import teaImg from "../assets/tea.jpg";
 import sandwichImg from "../assets/sandwich.jpg";
-import "./MenuPage.css";
 import vegBurgerImg from "../assets/veg-burger.jpg";
 import pastaImg from "../assets/pasta.jpg";
 import coldCoffeeImg from "../assets/cold-coffee.jpg";
@@ -16,92 +16,22 @@ import paneerWrapImg from "../assets/paneer-wrap.jpg";
 import samosaImg from "../assets/samosa.jpg";
 import mojitoImg from "../assets/mojito.jpg";
 import signInImage from "../assets/image.png";
+import "./MenuPage.css";
 
+// Optional: sample fallback if API fails or for dev/demo
 const sampleMenu = [
-  {
-    _id: "674f9a12345abc0011223341",
-    name: "Coffee",
-    price: 100,
-    image: coffeeImg,
-    description: "A rich, aromatic beverage brewed from roasted coffee beans. Perfect for an energizing start to your day.",
-  },
-  {
-    _id: "674f9a12345abc0011223342",
-    name: "Tea",
-    price: 50,
-    image: teaImg,
-    description: "A soothing infusion of premium tea leaves, served hot or cold. Refreshing and relaxing any time of day.",
-  },
-  {
-    _id: "674f9a12345abc0011223343",
-    name: "Sandwich",
-    price: 150,
-    image: sandwichImg,
-    description: "A fresh, delicious sandwich made with soft bread, crisp vegetables, cheese, and your favorite fillings.",
-  },
-  {
-    _id: "674f9a12345abc0011223344",
-    name: "Veg Burger",
-    price: 180,
-    image: vegBurgerImg,
-    description: "A juicy veggie patty topped with lettuce, tomato, and house sauce in a toasted bun. A delightful classic.",
-  },
-  {
-    _id: "674f9a12345abc0011223345",
-    name: "Pasta Alfredo",
-    price: 220,
-    image: pastaImg,
-    description: "Creamy Alfredo pasta tossed with garlic, herbs, and parmesan cheese for the perfect comfort meal.",
-  },
-  {
-    _id: "674f9a12345abc0011223346",
-    name: "Cold Coffee",
-    price: 120,
-    image: coldCoffeeImg,
-    description: "Chilled coffee blended smoothly with milk and ice cream for a refreshing caffeine indulgence.",
-  },
-  {
-    _id: "674f9a12345abc0011223347",
-    name: "Veg Pizza",
-    price: 250,
-    image: pizzaImg,
-    description: "Stone-baked pizza layered with tomato sauce, mozzarella, and fresh seasonal vegetables.",
-  },
-  {
-    _id: "674f9a12345abc0011223348",
-    name: "French Fries",
-    price: 90,
-    image: friesImg,
-    description: "Crispy golden fries salted to perfection. The ideal snack to pair with any meal.",
-  },
-  {
-    _id: "674f9a12345abc0011223349",
-    name: "Chocolate Shake",
-    price: 160,
-    image: chocolateShakeImg,
-    description: "Thick and creamy chocolate milkshake topped with whipped cream for the perfect treat.",
-  },
-  {
-    _id: "674f9a12345abc0011223350",
-    name: "Paneer Wrap",
-    price: 180,
-    image: paneerWrapImg,
-    description: "Soft tortilla wrapped around spicy paneer, veggies, and tangy sauces. A flavorful on-the-go snack.",
-  },
-  {
-    _id: "674f9a12345abc0011223351",
-    name: "Samosa Plate",
-    price: 70,
-    image: samosaImg,
-    description: "Crisp fried samosas stuffed with spicy potatoes and peas. Served with chutneys.",
-  },
-  {
-    _id: "674f9a12345abc0011223352",
-    name: "Mojito",
-    price: 110,
-    image: mojitoImg,
-    description: "Refreshing drink of lime, mint, and soda served chilled with ice. A summer favorite.",
-  },
+  { _id: "674f9a12345abc0011223341", name: "Coffee", price: 100, image: coffeeImg, description: "A rich, aromatic beverage brewed from roasted coffee beans." },
+  { _id: "674f9a12345abc0011223342", name: "Tea", price: 50, image: teaImg, description: "A soothing infusion of premium tea leaves, served hot or cold." },
+  { _id: "674f9a12345abc0011223343", name: "Sandwich", price: 150, image: sandwichImg, description: "A fresh, delicious sandwich with crisp vegetables and cheese." },
+  { _id: "674f9a12345abc0011223344", name: "Veg Burger", price: 180, image: vegBurgerImg, description: "A juicy veggie patty in a toasted bun." },
+  { _id: "674f9a12345abc0011223345", name: "Pasta Alfredo", price: 220, image: pastaImg, description: "Creamy Alfredo pasta tossed with garlic and herbs." },
+  { _id: "674f9a12345abc0011223346", name: "Cold Coffee", price: 120, image: coldCoffeeImg, description: "Chilled coffee blended with milk and ice cream." },
+  { _id: "674f9a12345abc0011223347", name: "Veg Pizza", price: 250, image: pizzaImg, description: "Stone-baked pizza with mozzarella and vegetables." },
+  { _id: "674f9a12345abc0011223348", name: "French Fries", price: 90, image: friesImg, description: "Crispy golden fries salted to perfection." },
+  { _id: "674f9a12345abc0011223349", name: "Chocolate Shake", price: 160, image: chocolateShakeImg, description: "Thick chocolate shake topped with whipped cream." },
+  { _id: "674f9a12345abc0011223350", name: "Paneer Wrap", price: 180, image: paneerWrapImg, description: "Spicy paneer and veggies wrapped in a tortilla." },
+  { _id: "674f9a12345abc0011223351", name: "Samosa Plate", price: 70, image: samosaImg, description: "Crisp fried samosas stuffed with spicy potatoes and peas." },
+  { _id: "674f9a12345abc0011223352", name: "Mojito", price: 110, image: mojitoImg, description: "Refreshing lime, mint, and soda served chilled." },
 ];
 
 const searchInputStyle = {
@@ -133,13 +63,35 @@ const MenuPage = () => {
   const { slug } = useParams();
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const [menu, setMenu] = useState([]);
   const [addedMsg, setAddedMsg] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isFocus, setIsFocus] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const timerRef = useRef();
 
   // Show DIGITAL DINE instead of the slug restaurant name
   const restaurantName = slug ? (slug === "cafe-delight" ? "DIGITAL DINE" : slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())) : "Our Restaurant";
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      setLoading(true);
+      try {
+        // Uses backend: /api/menu or /api/menu/:slug
+        const data = await apiFetch(`/menu${slug ? `/${slug}` : ""}`, { method: "GET" });
+        if (Array.isArray(data.menu)) setMenu(data.menu);
+        else setMenu([]);
+        setError("");
+      } catch {
+        setMenu(sampleMenu); // fallback to static menu if API fails
+        setError("Failed to load menu from API. Showing sample menu.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMenu();
+  }, [slug]);
 
   const showToast = (msg, duration = 1800) => {
     setAddedMsg(msg);
@@ -161,7 +113,7 @@ const MenuPage = () => {
     showToast(`${menuItem.name} added to cart!`, 1300);
   };
 
-  const filteredMenu = sampleMenu.filter((item) =>
+  const filteredMenu = menu.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -211,7 +163,6 @@ const MenuPage = () => {
           Menu <span style={{ color: "#e67e22" }}>{restaurantName}</span>
         </h1>
         <p>Choose your favorite dishes and enjoy quick, contactless dining!</p>
-
         <input
           type="text"
           placeholder="Search menu items..."
@@ -224,36 +175,42 @@ const MenuPage = () => {
         />
       </div>
 
-      <main className="menu-grid">
-        {filteredMenu.length > 0 ? (
-          filteredMenu.map((item) => (
-            <div key={item._id} className="menu-card">
-              <img src={item.image} alt={item.name} className="menu-img" />
-              <h3>{item.name}</h3>
-              <p className="menu-description">{item.description}</p>
-              <span>₹{item.price}</span>
-              <button
-                className="add-btn"
-                onClick={() => handleAddToCart(item)}
-                title={!user ? "Please sign in to order" : "Add to Cart"}
-              >
-                Add to Cart
-              </button>
-            </div>
-          ))
-        ) : (
-          <p
-            style={{
-              gridColumn: "1 / -1",
-              textAlign: "center",
-              marginTop: "2rem",
-              color: "#777",
-            }}
-          >
-            No menu items found.
-          </p>
-        )}
-      </main>
+      {loading ? (
+        <p style={{ textAlign: "center", margin: "2rem 0", color: "#7b8b99" }}>Loading menu...</p>
+      ) : error && !menu.length ? (
+        <p style={{ color: "red", textAlign: "center", margin: "2rem 0" }}>{error}</p>
+      ) : (
+        <main className="menu-grid">
+          {filteredMenu.length > 0 ? (
+            filteredMenu.map((item) => (
+              <div key={item._id} className="menu-card">
+                <img src={item.image} alt={item.name} className="menu-img" />
+                <h3>{item.name}</h3>
+                <p className="menu-description">{item.description}</p>
+                <span>₹{item.price}</span>
+                <button
+                  className="add-btn"
+                  onClick={() => handleAddToCart(item)}
+                  title={!user ? "Please sign in to order" : "Add to Cart"}
+                >
+                  Add to Cart
+                </button>
+              </div>
+            ))
+          ) : (
+            <p
+              style={{
+                gridColumn: "1 / -1",
+                textAlign: "center",
+                marginTop: "2rem",
+                color: "#777",
+              }}
+            >
+              No menu items found.
+            </p>
+          )}
+        </main>
+      )}
     </div>
   );
 };
