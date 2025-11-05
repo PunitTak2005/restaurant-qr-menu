@@ -11,16 +11,13 @@ html, body, #root {
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   width: 100vw;
   background: #1f1f1f;
-  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.17);
+  box-shadow: 0 4px 13px rgba(0,0,0,0.17);
   z-index: 10;
   padding: 0.7rem 2.4rem;
   min-height: 56px;
-  transition: padding 0.3s ease;
 }
 
 .logo-section {
@@ -35,109 +32,307 @@ html, body, #root {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #ffb347;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffb347;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-link-btn {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #f0f0f0;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  text-decoration: none;
   transition: all 0.3s ease;
+  outline: none;
 }
 
-/* ===== Media Queries for Professional Responsive Design ===== */
+.nav-link-btn:hover {
+  color: #1f1f1f;
+  background: #ffb347;
+  transform: scale(1.08);
+  box-shadow: 0 4px 15px rgba(255, 179, 71, 0.20);
+}
 
-/* Large Tablets and Small Desktops (1024px and below) */
-@media (max-width: 1024px) {
+/* ===== Admin/Owner Dashboard Links (if used) ===== */
+.admin-dashboard-link {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  color: white !important;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+.admin-dashboard-link:hover {
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+.admin-dashboard-link::before {
+  content: "👨‍💼";
+  margin-right: 0.5rem;
+}
+
+.owner-dashboard-link {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: white !important;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+.owner-dashboard-link:hover {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+.owner-dashboard-link::before {
+  content: "👑";
+  margin-right: 0.5rem;
+}
+
+/* ===== Home Container - offset so content is not hidden by navbar ===== */
+.home-container {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', 'Poppins', Arial, sans-serif;
+  background: linear-gradient(120deg, #e8edfa 0%, #fff6f0 100%);
+  color: #222;
+  letter-spacing: 0.02em;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  margin-top: 56px; /* ensures it's always below the navbar */
+}
+
+/* Desktop offset if navbar is taller */
+@media (min-width: 650px) {
+  .home-container {
+    margin-top: 62px;
+  }
   .navbar {
-    padding: 0.8rem 2rem;
-    min-height: 60px;
-  }
-  
-  .logo-section {
-    gap: 12px;
-  }
-  
-  .logo {
-    width: 42px;
-    height: 42px;
+    min-height: 62px;
+    padding: 0.75rem 2.4rem;
   }
 }
 
-/* Regular Tablets (768px and below) */
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    padding: 1rem 1.5rem;
-    min-height: auto;
-    gap: 12px;
-  }
-  
-  .logo-section {
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .logo {
-    width: 38px;
-    height: 38px;
-  }
-  
-  /* Touch-friendly spacing for interactive elements */
-  button, a {
-    min-height: 44px;
-    padding: 0.5rem 1rem;
-  }
+/* ===== Homepage Header ===== */
+.homepage-header {
+  text-align: center;
+  padding: 2.7rem 1rem 1.6rem 1rem;
+  background: linear-gradient(90deg, #215190 65%, #3978e8 100%);
+  color: #fff;
+  border-bottom-left-radius: 36px;
+  border-bottom-right-radius: 36px;
+  box-shadow: 0 8px 32px rgba(33,81,144,0.07);
 }
 
-/* Mobile Devices (480px and below) */
+.homepage-greeting {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #fff9dc;
+  letter-spacing: 1.3px;
+  text-shadow: 0 2px 9px #28477a22;
+}
+
+.brand-title {
+  font-size: 2.7rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffcb62;
+  text-shadow: 0 2px 8px #fff3cd33;
+  margin: 0;
+}
+
+.brand-highlight {
+  color: #fff;
+  background: linear-gradient(90deg, #ffc857 55%, #ffe182 100%);
+  border-radius: 9px;
+  padding: 0.2em 0.55em;
+  font-weight: 700;
+}
+
+.brand-mission {
+  margin-top: 0.8rem;
+  font-size: 1.09rem;
+  color: #e3eaf8;
+  background: rgba(255,255,255,0.07);
+  padding: 0.4em 1em;
+  border-radius: 13px;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 12px #21519010;
+  font-style: italic;
+}
+
+/* ===== Hero Section ===== */
+.hero-section {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.3rem 1rem;
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.03), 
+      rgba(255, 245, 225, 0.07)
+    );
+  min-height: 0;
+}
+
+.hero-content {
+  width: 100%;
+  max-width: 690px;
+  margin: 0 auto;
+  text-align: center;
+  background: #fff;
+  border-radius: 36px;
+  box-shadow: 0 8px 32px #3978e84a;
+  padding: 2.3rem 1.8rem;
+}
+
+.hero-intro {
+  font-size: 1.47rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #215190;
+}
+.hero-description {
+  font-size: 1.1rem;
+  margin-bottom: 2.1rem;
+  color: #38485e;
+}
+
+/* Dish Gallery */
+.dish-gallery {
+  display: flex;
+  gap: 2.2rem;
+  justify-content: center;
+  margin: 2.5rem 0 1.3rem 0;
+}
+.dish-card {
+  background: #f8fafc;
+  border-radius: 22px;
+  box-shadow: 0 6px 30px #e0eafc99;
+  width: 118px;
+  padding: 1.45rem 0.67rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.17s, box-shadow 0.16s;
+  cursor: pointer;
+  border-bottom: 3px solid #ffc85788;
+}
+.dish-card:hover {
+  transform: translateY(-10px) scale(1.07);
+  box-shadow: 0 12px 44px #2151901a;
+  border-bottom: 3px solid #ffe182;
+}
+.dish-card img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px #ffc85777;
+  margin-bottom: 0.73rem;
+}
+.dish-card h3 {
+  margin: 0;
+  font-size: 1.07rem;
+  color: #215190;
+  font-weight: 700;
+}
+
+/* CTA Buttons */
+.menu-btn {
+  margin-top: 2.2rem;
+  font-size: 1.12rem;
+  background: linear-gradient(90deg, #215190 70%, #147bcd 100%);
+  color: #fff;
+  border: none;
+  border-radius: 26px;
+  padding: 1rem 2.2rem;
+  box-shadow: 0 2px 20px #21519014;
+  transition: background 0.19s, color 0.13s, transform 0.13s;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.menu-btn:hover,
+.dashboard-btn:hover,
+.nav-link-btn:hover {
+  background: linear-gradient(90deg, #ffc857 60%, #ffe182 100%);
+  color: #215190;
+  transform: translateY(-2px) scale(1.04);
+}
+.dashboard-btn {
+  margin-top: 2.1rem;
+  font-size: 1.03rem;
+  padding: 0.8rem 2.5rem;
+  background: linear-gradient(90deg, #28477a 60%, #3978e8 100%);
+  color: #fff;
+  border-radius: 32px;
+  box-shadow: 0 2px 13px #28477a22;
+  cursor: pointer;
+  font-weight: 700;
+  border: none;
+  transition: background 0.17s, color 0.16s, transform 0.15s;
+}
+
+/* Footer */
+.footer {
+  background: #1f1f1f;
+  text-align: center;
+  padding: 1.35rem 0 1.15rem 0;
+  color: #f0f0f0;
+  font-weight: 500;
+  font-size: 1.07rem;
+  border-top: 1px solid #333;
+  margin-top: auto;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+  border-top-left-radius: 36px;
+  border-top-right-radius: 36px;
+  width: 100vw;
+}
+.footer .brand-highlight {
+  color: #ffc857;
+  background: none;
+  font-weight: 700;
+  padding: 0 .19rem;
+}
+
+/* ========== Responsive styles ========== */
+@media (max-width: 850px) {
+  .dish-gallery { gap: 0.9rem; }
+  .dish-card { width: 81px; padding: 0.58rem 0.2rem; }
+  .dish-card img { width: 40px; height: 40px; }
+}
+@media (max-width: 650px) {
+  .navbar { min-height: 44px; padding: 0.4rem 1rem; }
+  .home-container { margin-top: 44px; }
+  .logo-text { font-size: 1.15rem; }
+  .hero-content { padding: 1.1rem; border-radius: 18px; }
+  .homepage-header { padding: 1.4rem 0.5rem; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; }
+  .menu-btn, .dashboard-btn { padding: 0.62rem 1.34rem; font-size: 0.99rem; border-radius: 14px; }
+  .dish-card { width: 74px; padding: 0.5rem 0.4rem; font-size: 0.89rem;}
+  .dish-card img { width: 38px; height: 38px; }
+}
 @media (max-width: 480px) {
-  .navbar {
-    flex-direction: column;
-    padding: 0.8rem 1rem;
-    min-height: auto;
-    gap: 10px;
-  }
-  
-  .logo-section {
-    gap: 8px;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .logo {
-    width: 32px;
-    height: 32px;
-    border-width: 1.5px;
-  }
-  
-  /* Enhanced touch targets for mobile */
-  button, a {
-    min-height: 48px;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-  }
-  
-  /* Improved readability on small screens */
-  body {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-}
-
-/* Extra Small Mobile Devices (360px and below) */
-@media (max-width: 360px) {
-  .navbar {
-    padding: 0.6rem 0.8rem;
-    gap: 8px;
-  }
-  
-  .logo-section {
-    gap: 6px;
-  }
-  
-  .logo {
-    width: 28px;
-    height: 28px;
-    border-width: 1.5px;
-  }
-  
-  button, a {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-  }
+  .footer, .homepage-header { border-radius: 12px; }
 }
