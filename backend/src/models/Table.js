@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import Order from "../models/Order.js"; // ✅ Allow static queries to reference orders
+import Order from "../models/Order.js";
 
-// ==================================================
+// ================================
 // Table Schema
-// ==================================================
+// ================================
 const tableSchema = new mongoose.Schema(
   {
     number: { type: Number, required: true, unique: true },
@@ -16,19 +16,18 @@ const tableSchema = new mongoose.Schema(
     seats: { type: Number, default: 4 },
     active: { type: Boolean, default: true },
   },
-  { timestamps: true } // recommended for tracking created/updated times
+  { timestamps: true }
 );
 
-// ==================================================
-// Static Utility: Log Linked Orders (with Population)
-// ==================================================
-// Use to verify or debug all orders connected to tables in admin dashboard
+// ================================
+// Static Utility: Debug Orders-Table Links
+// ================================
 tableSchema.statics.logPopulatedOrders = async function () {
   try {
     const orders = await Order.find()
       .populate({
         path: "tableId",
-        model: "Table", // ✅ must match mongoose.model("Table")
+        model: "Table",
         select: "number status",
       })
       .populate("userId", "name email role")
@@ -43,8 +42,8 @@ tableSchema.statics.logPopulatedOrders = async function () {
   }
 };
 
-// ==================================================
-// Export Model (Case‑Sensitive Name)
-// ==================================================
+// ================================
+// Export Model
+// ================================
 const Table = mongoose.models.Table || mongoose.model("Table", tableSchema);
 export default Table;
