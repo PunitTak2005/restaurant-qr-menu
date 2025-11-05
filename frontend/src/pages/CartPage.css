@@ -208,10 +208,13 @@ body {
 
 /* ========== Table Dropdown ========== */
 .table-select-wrapper {
-  margin: 1rem 0;
+  margin: 1rem auto;
   position: relative;
   width: 100%;
   max-width: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .table-select-label {
