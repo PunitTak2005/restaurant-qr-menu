@@ -35,7 +35,7 @@ export const getAnalytics = async (req, res) => {
       revenueAgg(getStartOf("month"))
     ]);
 
-    const topItems = await Order.aggregate([
+    const topItemsResult = await Order.aggregate([
       { $unwind: "$items" },
       {
         $group: {
@@ -43,32 +43,19 @@ export const getAnalytics = async (req, res) => {
           orderCount: { $sum: "$items.qty" }
         }
       },
-      {
-        $lookup: {
-          from: "menuitems",
-          localField: "_id",
-          foreignField: "_id",
-          as: "item"
-        }
-      },
-      { $unwind: "$item" },
-      {
-        $project: {
-          name: "$item.name",
-          orderCount: 1
-        }
-      },
       { $sort: { orderCount: -1 } },
       { $limit: 5 }
     ]);
 
-    const topTables = await Order.aggregate([
-      { $group: {
+    const tableUsageResult = await Order.aggregate([
+      {
+        $group: {
           _id: "$tableId",
           usageCount: { $sum: 1 }
         }
       },
-      { $lookup: {
+      {
+        $lookup: {
           from: "tables",
           localField: "_id",
           foreignField: "_id",
@@ -76,7 +63,8 @@ export const getAnalytics = async (req, res) => {
         }
       },
       { $unwind: "$table" },
-      { $project: {
+      {
+        $project: {
           tableNumber: "$table.number",
           usageCount: 1
         }
@@ -84,6 +72,10 @@ export const getAnalytics = async (req, res) => {
       { $sort: { usageCount: -1 } },
       { $limit: 5 }
     ]);
+
+    // Ensure topItems and tableUsage are always arrays
+    const topItems = topItemsResult || [];
+    const tableUsage = tableUsageResult || [];
 
     // Debug logs
     console.log("todayOrders:", todayOrders);
@@ -93,7 +85,7 @@ export const getAnalytics = async (req, res) => {
     console.log("weekRevenue:", weekRevenue);
     console.log("monthRevenue:", monthRevenue);
     console.log("topItems:", topItems);
-    console.log("topTables:", topTables);
+    console.log("tableUsage:", tableUsage);
 
     res.json({
       todayOrders,
@@ -103,7 +95,7 @@ export const getAnalytics = async (req, res) => {
       weekRevenue,
       monthRevenue,
       topItems,
-      topTables
+      tableUsage
     });
   } catch (err) {
     res.status(500).json({ error: err.message || "Analytics failed" });
